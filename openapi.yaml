@@ -1,4 +1,4 @@
-openapi: 3.0.3
+openapi: 3.1.0
 info:
   title: SIP.TG REST API
   version: '1.0'
@@ -153,7 +153,7 @@ paths:
           schema:
             type: string
         - in: query
-          description: 'Offset from which to display results'
+          description: Offset from which to display results
           deprecated: false
           schema:
             type: integer
@@ -440,7 +440,7 @@ paths:
               - revoke
           in: query
           name: operation
-          description: 'Type of delete session operation: `delete` - end session and delete related data; `logout` - end session with data saved; `revoke` - revoke session administration rights without ending session and deleting data'
+          description: 'Type of delete session operation: `delete` — end session and delete related data; `logout` — end session with data saved; `revoke` — revoke session administration rights without ending session and deleting data'
           required: true
   '/sessions/{id}/resolve_user/{query}':
     parameters:
@@ -547,7 +547,7 @@ paths:
             type: integer
           in: query
           name: offset
-          description: 'Offset from which to output the results'
+          description: Offset from which to output the results
   /sip_accounts:
     get:
       summary: List of SIP accounts
@@ -596,10 +596,10 @@ paths:
                             - restricted
                           description: |-
                             Account status:
-                            `online` - connected;
-                            `offline` - disconnected;
-                            `error` - connection error;
-                            `restricted` - restricted by tariff plan
+                            `online` — connected;
+                            `offline` — disconnected;
+                            `error` — connection error;
+                            `restricted` — restricted by tariff plan
                       required:
                         - id
                         - name
@@ -618,7 +618,7 @@ paths:
               - softphone
           in: query
           name: mode
-          description: 'SIP accounts of which mode to obtain: `gateway` - gateway mode; `softphone` - softphone mode'
+          description: 'SIP accounts of which mode to obtain: `gateway` — gateway mode; `softphone` — softphone mode'
           required: true
         - schema:
             type: integer
@@ -634,7 +634,7 @@ paths:
             type: integer
           in: query
           name: offset
-          description: 'Offset from which to display results'
+          description: Offset from which to display results
     post:
       summary: SIP account creation
       operationId: post-sip_accounts
@@ -668,7 +668,7 @@ paths:
                     - ip-ip
                 session_id:
                   type: integer
-                  description: '(for Gateway mode) Session ID in which the account should be created'
+                  description: (for Gateway mode) Session ID in which the account should be created
               required:
                 - type
     parameters: []
@@ -718,10 +718,10 @@ paths:
                     type: string
                     description: |-
                       Account state:
-                      `online` - connected;
-                      `offline` - disconnected;
-                      `error` - connection error;
-                      `restricted` - restricted by tariff plan
+                      `online` — connected;
+                      `offline` — disconnected;
+                      `error` — connection error;
+                      `restricted` — restricted by tariff plan
                     enum:
                       - online
                       - offline
@@ -731,8 +731,8 @@ paths:
                     type: array
                     description: |-
                       List of restrictions of use the SIP account in accordance with the tariff plan:
-                      `worker` - paid Worker;
-                      `other_users` - assigned a user for the account
+                      `worker` — paid Worker;
+                      `other_users` — assigned a user for the account
                     uniqueItems: true
                     items:
                       type: string
@@ -762,10 +762,10 @@ paths:
                         type: string
                         description: |-
                           Server type:
-                          `official` - official SIP.TG server;
-                          `public` - SIP.TG user's public server;
-                          `private` - private server;
-                          `template` - server for SIP template
+                          `official` — official SIP.TG server;
+                          `public` — SIP.TG user's public server;
+                          `private` — private server;
+                          `template` — server for SIP template
                         enum:
                           - official
                           - public
@@ -907,7 +907,7 @@ paths:
                   - count
                   - workers
       operationId: get-sip_accounts-id-workers
-      description: 'Returns the list of Worker servers available for use with the specified SIP account'
+      description: Returns the list of Worker servers available for use with the specified SIP account
       parameters:
         - schema:
             type: boolean
@@ -918,12 +918,12 @@ paths:
             type: string
           in: query
           name: search
-          description: Search pattern (part of the name, address or owner's username)
+          description: 'Search pattern (part of the name, address or owner''s username)'
         - schema:
             type: integer
           in: query
           name: offset
-          description: 'Offset from which to display results'
+          description: Offset from which to display results
   '/sip_accounts/{ids}':
     parameters:
       - schema:
@@ -934,7 +934,7 @@ paths:
         name: ids
         in: path
         required: true
-        description: 'Comma-separated list of account IDs'
+        description: Comma-separated list of account IDs
         style: simple
     post:
       summary: Change SIP accounts
@@ -963,7 +963,7 @@ paths:
                     confirm_uri:
                       type: string
                       format: uri
-                      description: '(for account type `ip-ip`) SIP URI address to which initiate INVITE request from the confirming IP address'
+                      description: (for account type `ip-ip`) SIP URI address to which initiate INVITE request from the confirming IP address
                     worker_id:
                       type: string
                       description: The ID of the newly assigned Worker server
@@ -1038,7 +1038,7 @@ paths:
                   type: string
                   description: '(for account types `siptg-pbx`, `ip-ip`) Number on PBX side to process Telegram→SIP calls'
                 address:
-                  description: '(for account type `ip-ip`) Initiate procedure to change IP address through its verification'
+                  description: (for account type `ip-ip`) Initiate procedure to change IP address through its verification
                   nullable: true
                 worker_id:
                   type: integer
@@ -1090,10 +1090,10 @@ paths:
         name: ids
         in: path
         required: true
-        description: 'Comma-separated list of account IDs'
+        description: Comma-separated list of account IDs
         style: simple
     post:
-      summary: 'Enable/disable SIP accounts'
+      summary: Enable/disable SIP accounts
       tags: []
       responses:
         '200':
@@ -1231,7 +1231,7 @@ paths:
             type: integer
           in: query
           name: offset
-          description: 'Offset from which to display results'
+          description: Offset from which to display results
   '/tariffs/{code}/{user_id}':
     parameters:
       - schema:
@@ -1294,7 +1294,7 @@ paths:
                     nullable: true
                   admin_id:
                     type: integer
-                    description: Telegram User ID - tariff plan administrator
+                    description: Telegram User ID of the tariff plan administrator
                     nullable: true
                   user_id:
                     type: integer
@@ -1319,7 +1319,7 @@ paths:
                     properties:
                       '{code}':
                         type: object
-                        description: Option `{code}` is used as a key
+                        description: 'Option `{code}` is used as a key'
                         properties:
                           type:
                             type: string
@@ -1328,8 +1328,8 @@ paths:
                               - period
                             description: |-
                               Option type:
-                              `fixed` - fixed option, not zeroed;
-                              `period` - periodic option, resets to zero by time
+                              `fixed` — fixed option, not zeroed;
+                              `period` — periodic option, resets to zero by time
                           name:
                             type: string
                             description: Name of option
@@ -1341,10 +1341,10 @@ paths:
                               - boolean
                           used:
                             type: integer
-                            description: In case the option is a quota - the current used value
+                            description: In case the option is a quota — the current used value
                           increase_only:
                             type: boolean
-                            description: In case of updating tariff plan, the new value will be added to the old one
+                            description: 'In case of updating tariff plan, the new value will be added to the old one'
                           constraints:
                             type: string
                             description: Restrictions for the option values
@@ -1445,11 +1445,11 @@ paths:
         required: true
         description: Tariff plan code
       - schema:
-          type: string
+          type: integer
         name: user_id
         in: path
+        description: User ID for which the plan is about to activate (`0` for user of token)
         required: true
-        description: 'User ID for which the plan is about to activate'
     post:
       summary: Activation (renewal) of the tariff plan
       tags: []
@@ -1483,11 +1483,41 @@ paths:
                           - integer
                           - boolean
                         description: 'Value of the option with `{code}` to change'
+                  prices:
+                    type: object
+                    description: Explanation about what positions are included into the payment
+                    required:
+                      - base
+                      - balance
+                    properties:
+                      base:
+                        type: string
+                        description: Base tariff cost
+                      period_discount:
+                        type: string
+                        description: Discount for the payment for a multiple period (multiple months; if applicable)
+                      partner_discount:
+                        type: string
+                        description: Partner discount (if applicable)
+                      balance:
+                        type: string
+                        description: Balance changing
+                  currency:
+                    type: string
+                    description: The currency of `cost` and `prices`
+                  payment_id:
+                    type:
+                      - string
+                      - 'null'
+                    description: Payment ID in case the tariff plan was activated
                 required:
                   - cost
                   - period
                   - expire
                   - options
+                  - prices
+                  - currency
+                  - payment_id
       operationId: post-tariffs-code-user_id-activate
       description: |-
         Activates, extends and changes tariff plan options. The token owner becomes the tariff administrator after activation.
