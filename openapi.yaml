@@ -1,0 +1,1541 @@
+openapi: 3.0.3
+info:
+  title: SIP.TG REST API
+  version: '1.0'
+  description: |-
+    REST API for SIP.TG partners
+
+    # Error handling
+    If an error occurs, the result may contain the following fields:
+    | **Error field** | **Description**                                     |
+    |-----------------|-----------------------------------------------------|
+    | `error`         | Error code                                          |
+    | `description`   | (optional) A more detailed description of the error |
+    | `field`         | (optional) Parameter in which there is an error     |
+
+    ## Common error codes
+    | **Error code** | **Description**                                 |
+    |----------------|-------------------------------------------------|
+    | `unauthorized` | Authorization by token failed                   |
+    | `not_found`    | Object not found                                |
+    | `wrong_value`  | An invalid parameter value is specified         |
+    | `max_accounts` | The limit of the number of objects is exceeded  |
+    | `multiple_ids` | Prohibits a group change of the parameter value |
+    | `db`           | Database error                                  |
+    | `unknown`      | Unknown error                                   |
+
+    ## Errors in SIP account change and activation
+    | **Error code**    | **Description**                                                      |
+    |-------------------|----------------------------------------------------------------------|
+    | `params`          | Invalid connection parameters                                        |
+    | `tariff`          | Tariff limitations                                                   |
+    | `timeout`         | SIP server waiting time exceeded                                     |
+    | `id`              | SIP account not found                                                |
+    | `busy`            | another connection/disconnection operation is active                 |
+    | `session`         | Failed to activate the associated Telegram session                   |
+    | `worker`          | Worker is unavailable                                                |
+    | `account`         | Wrong type of SIP account                                            |
+    | `restricted`      | Option change is prohibited                                          |
+    | `noauth`          | SIP server returned error 401                                        |
+    | `forbidden`       | SIP server returned error 403                                        |
+    | `noroute`         | SIP server returned error 404                                        |
+    | `no_registrar`    | (for account type `pbx-siptg`) No connection from the PBX            |
+    | `worker_inactive` | (for account type `ip-ip`) Worker not available to verify IP address |
+
+    ## Errors in creating a Telegram session
+    | **Error code**        | **Description**                                                            |
+    |-----------------------|----------------------------------------------------------------------------|
+    | `storage_unavailable` | Session storage not available                                              |
+    | `unregistered`        | Phone number not registered in Telegram                                    |
+    | `no_recovery_email`   | No email for 2-factor authorization                                        |
+    | `wrong_state`         | The session state does not allow authorization (see the `expected` field)  |
+    | `wrong_operation`     | The session state does not allow this operation (see the `expected` field) |
+    | `code_invalid`        | An invalid one-time code has been entered                                  |
+    | `telegram_error`      | Telegram error (see `code` and `message` fields)                           |
+
+    ## Errors in tariff plan activation
+    | **Error code**       | **Description**                                          |
+    |----------------------|----------------------------------------------------------|
+    | `insufficient`       | Insufficient balance (see `cost` and `underpaid` fields) |
+    | `already_paid`       | Invoice has already been paid                            |
+    | `incorrect_currency` | Incorrect currency                                       |
+    | `activate_denied`    | Activation of the tariff is not allowed                  |
+    | `no_changes`         | No changes                                               |
+    | `paysystem_error`    | Payment system error                                     |
+    | `not_processed`      | Not processed                                            |
+    | `no_payment_method`  | No credit card (account) is linked                       |
+  contact:
+    name: SIP.TG support
+    url: 'https://t.me/siptg_support'
+    email: support@sip.tg
+paths:
+  /whoami:
+    summary: ''
+    get:
+      tags: []
+      summary: Information about the user of token
+      description: Returns information about the user of token
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user_id:
+                    description: Token owner's Telegram user ID
+                    type: integer
+                  balance:
+                    type: string
+                    description: User balance
+                  currency:
+                    type: string
+                    description: Balance currency
+                  lang:
+                    type: string
+                    description: Language
+                required:
+                  - user_id
+                  - balance
+                  - currency
+                  - lang
+      operationId: get-whoami
+    description: ''
+  /storages:
+    summary: ''
+    get:
+      tags: []
+      summary: List of sessions storages
+      description: Lists the sessions storages available to the user (private and shared)
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  description: Storage
+                  properties:
+                    id:
+                      type: string
+                      description: Storage ID
+                      pattern: ^\d+$
+                    name:
+                      type: string
+                      description: Storage name
+                    address:
+                      type: string
+                      description: 'Address:port of the storage'
+                    owner_id:
+                      type: integer
+                      description: Telegram ID of the storage owner
+                  required:
+                    - id
+                    - name
+                    - address
+                    - owner_id
+      operationId: get-storages
+    description: ''
+  /sessions:
+    summary: ''
+    get:
+      tags: []
+      parameters:
+        - in: query
+          description: 'Search sample (username, id, or phone number)'
+          required: false
+          deprecated: false
+          allowEmptyValue: false
+          name: search
+          schema:
+            type: string
+        - in: query
+          description: 'Offset from which to display results'
+          deprecated: false
+          schema:
+            type: integer
+          allowEmptyValue: false
+          name: offset
+      summary: List of Telegram sessions
+      description: Lists available Telegram sessions (private and shared for administration)
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  offset:
+                    type: integer
+                    description: Real result offset
+                  count:
+                    type: integer
+                    description: Total number of results
+                  sessions:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          description: Session ID
+                          pattern: ^\d+$
+                        user_id:
+                          type: integer
+                          description: Telegram user ID
+                        storage_id:
+                          type: string
+                          description: Sessions storage ID
+                          pattern: ^\d+$
+                        active:
+                          type: boolean
+                          description: Mark of active session
+                      required:
+                        - id
+                        - user_id
+                        - storage_id
+                        - active
+                required:
+                  - offset
+                  - count
+                  - sessions
+      operationId: get-sessions
+    description: ''
+    post:
+      description: Creates a new or prepares a terminated Telegram session for the authorization procedure
+      summary: Create the Telegram session for authorization
+      parameters: []
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                  description: ID of a terminated session
+                storage_id:
+                  type: integer
+                  description: ID of a new sessions storage
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    description: The assigned ID for the new session
+                    pattern: ^\d+$
+                  storage_id:
+                    type: string
+                    description: The ID of the assigned session storage
+                    pattern: ^\d+$
+                required:
+                  - id
+                  - storage_id
+      operationId: post-sessions
+  '/sessions/{id}/login':
+    summary: ''
+    post:
+      tags: []
+      summary: Telegram session authorization
+      description: |-
+        Controls the process of creating (authorizing) a new Telegram session.
+
+        Possible **Errors in creating a Telegram session**.
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                storage_id:
+                  type: integer
+                  description: Storage ID
+                operation:
+                  type: string
+                  enum:
+                    - phone_input
+                    - code_login
+                    - code_recovery
+                  description: Operation of session creation phase
+                phone:
+                  type: integer
+                  description: Phone number registered in Telegram
+                code:
+                  type: integer
+                  description: Confirmation code (from the service account or email)
+              required:
+                - storage_id
+                - operation
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  next:
+                    type: string
+                    enum:
+                      - code_logn
+                      - code_recovery
+                    description: Expected next operation
+                    nullable: true
+                  email:
+                    type: string
+                    description: 2-factor authorization email address mask
+                    format: email
+                  password:
+                    type: string
+                    description: New 2-factor authorization password
+                    format: password
+                  user_id:
+                    type: integer
+                    description: Telegram user ID of the created session
+                required:
+                  - next
+      operationId: post-sessions-id-login
+    parameters:
+      - schema:
+          type: integer
+        name: id
+        in: path
+        description: Session ID
+        required: true
+  '/sessions/{id}':
+    get:
+      tags: []
+      parameters: []
+      description: Returns full details of the specified Telegram session
+      operationId: get-sessions-id
+      summary: Details about the Telegram session
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user_id:
+                    type: integer
+                    description: Telegram user ID
+                  storage_id:
+                    type: string
+                    description: Session storage ID
+                    pattern: ^\d+$
+                  active:
+                    type: boolean
+                    description: Mark of active session
+                  dtmf_in:
+                    type: boolean
+                    description: Display DTMF for SIP→Telegram calls
+                  dtmf_out:
+                    type: boolean
+                    description: Display DTMF for Telegram→SIP calls
+                  redial:
+                    type: boolean
+                    description: Display Callback button
+                  lines:
+                    type: boolean
+                    description: Display Lines button (callback through the line)
+                  msg_proc:
+                    type: boolean
+                    description: 'Message processing (answering machine, call any number through PBX)'
+                  callback:
+                    type: boolean
+                    description: Callback feature for calls
+                required:
+                  - user_id
+                  - storage_id
+                  - active
+                  - dtmf_in
+                  - dtmf_out
+                  - redial
+                  - lines
+                  - msg_proc
+                  - callback
+    post:
+      tags: []
+      summary: Change the Telegram session
+      description: Makes changes to settings of the Telegram session
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                dtmf_in:
+                  type: boolean
+                  description: Display DTMF for SIP→Telegram calls
+                dtmf_out:
+                  type: boolean
+                  description: Display DTMF for Telegram→SIP calls
+                redial:
+                  type: boolean
+                  description: Display Callback button
+                lines:
+                  type: boolean
+                  description: Displaying Lines button (callback through the line)
+                msg_proc:
+                  type: boolean
+                  description: 'Message processing (answering machine, call any number through PBX)'
+                callback:
+                  type: boolean
+                  description: Callback feature for calls
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  updated:
+                    type: boolean
+                    description: Updating result
+                required:
+                  - updated
+      operationId: post-sessions-id
+    parameters:
+      - schema:
+          type: integer
+        name: id
+        in: path
+        required: true
+        description: Session ID
+    delete:
+      summary: Terminate a Telegram session
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  deleted:
+                    type: boolean
+                    description: Result of session termination and data deletion
+                required:
+                  - deleted
+              examples: {}
+      description: 'Ends, deletes or revokes control access to the Telegram session'
+      operationId: delete-sessions-id
+      parameters:
+        - schema:
+            type: string
+            enum:
+              - delete
+              - logout
+              - revoke
+          in: query
+          name: operation
+          description: 'Type of delete session operation: `delete` - end session and delete related data; `logout` - end session with data saved; `revoke` - revoke session administration rights without ending session and deleting data'
+          required: true
+  '/sessions/{id}/resolve_user/{query}':
+    parameters:
+      - schema:
+          type: integer
+        name: id
+        in: path
+        required: true
+        description: Telegram session ID
+      - schema:
+          type: string
+        name: query
+        in: path
+        required: true
+        description: Text of the query (phone number or username)
+    get:
+      summary: Definition of Telegram User ID
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user_id:
+                    type: integer
+                    description: Telegram User ID
+                required:
+                  - user_id
+      operationId: get-sessions-id-resolve_user-query
+      description: Gets the Telegram User ID by phone number or username through the specified session
+  /sip_templates:
+    get:
+      summary: List of SIP templates
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  offset:
+                    type: integer
+                    description: Real results offset
+                  count:
+                    type: integer
+                    description: Total number of results
+                  sip_templates:
+                    type: array
+                    description: List of found SIP templates
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: string
+                          description: Template code
+                        name:
+                          type: string
+                          description: Display name
+                        free:
+                          type: boolean
+                          description: The mark of the free template (lift the restrictions for the free plan)
+                        formats:
+                          type: string
+                          description: 'List of audio codecs in priority order (see [documentation](https://www.sip.tg/en/docs/codecs))'
+                        dtmf:
+                          type: string
+                          description: 'List of DTMF command methods in priority order (see [documentation](https://www.sip.tg/en/docs/dtmf))'
+                        transport:
+                          type: string
+                          description: The way to connect to the SIP Server
+                          enum:
+                            - udp
+                            - tcp
+                            - tls
+                        out_rule:
+                          type: string
+                          description: 'Number conversion rules (see [documentation](https://www.sip.tg/en/docs/rewrite-rules))'
+                      required:
+                        - code
+                        - name
+                        - free
+                        - formats
+                        - dtmf
+                        - transport
+                        - out_rule
+                required:
+                  - offset
+                  - count
+                  - sip_templates
+      operationId: get-sip_templates
+      description: Lists SIP templates for Softphone mode
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: search
+          description: 'Search pattern (template code, part of the name)'
+        - schema:
+            type: integer
+          in: query
+          name: offset
+          description: 'Offset from which to output the results'
+  /sip_accounts:
+    get:
+      summary: List of SIP accounts
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  count:
+                    type: integer
+                    description: Total number of results
+                  offset:
+                    type: integer
+                    description: The actual offset of the results
+                  sip_accounts:
+                    type: array
+                    description: List of found SIP accounts
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          description: Account ID
+                          pattern: ^\d+$
+                        name:
+                          type: string
+                          description: Account name
+                        type:
+                          type: string
+                          enum:
+                            - softphone
+                            - pbx-siptg
+                            - siptg-pbx
+                            - ip-ip
+                          description: Account type
+                        state:
+                          type: string
+                          enum:
+                            - online
+                            - offline
+                            - error
+                            - restricted
+                          description: |-
+                            Account status:
+                            `online` - connected;
+                            `offline` - disconnected;
+                            `error` - connection error;
+                            `restricted` - restricted by tariff plan
+                      required:
+                        - id
+                        - name
+                        - type
+                        - state
+                required:
+                  - count
+                  - offset
+      operationId: get-sip_accounts
+      description: Lists the user's SIP accounts
+      parameters:
+        - schema:
+            type: string
+            enum:
+              - gateway
+              - softphone
+          in: query
+          name: mode
+          description: 'SIP accounts of which mode to obtain: `gateway` - gateway mode; `softphone` - softphone mode'
+          required: true
+        - schema:
+            type: integer
+          in: query
+          name: session_id
+          description: (for Gateway mode) Session ID
+        - schema:
+            type: string
+          in: query
+          name: search
+          description: 'Search sample (for Softphone mode; part of SIP template name, login, account name, registrar, Telegram user name; Telegram User ID or phone number)'
+        - schema:
+            type: integer
+          in: query
+          name: offset
+          description: 'Offset from which to display results'
+    post:
+      summary: SIP account creation
+      operationId: post-sip_accounts
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    description: The ID of the created SIP account
+              examples: {}
+      description: Creates a new SIP account
+      parameters: []
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                type:
+                  type: string
+                  description: Account type
+                  enum:
+                    - softphone
+                    - pbx-siptg
+                    - siptg-pbx
+                    - ip-ip
+                session_id:
+                  type: integer
+                  description: '(for Gateway mode) Session ID in which the account should be created'
+              required:
+                - type
+    parameters: []
+  '/sip_accounts/{id}':
+    parameters:
+      - schema:
+          type: integer
+        name: id
+        in: path
+        required: true
+        description: SIP account ID
+    get:
+      summary: Information about the SIP account
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  name:
+                    type: string
+                    description: Account name
+                  type:
+                    type: string
+                    enum:
+                      - softphone
+                      - pbx-siptg
+                      - siptg-pbx
+                      - ip-ip
+                    description: Account type
+                  formats:
+                    type: string
+                    description: 'List of audio codecs in order of priority (see [documentation](https://www.sip.tg/docs/codecs))'
+                  dtmf:
+                    type: string
+                    description: 'List of DTMF command methods in order of priority (see [documentation](https://www.sip.tg/docs/dtmf))'
+                  out_rule:
+                    type: string
+                    description: 'Number conversion rules (see [documentation](https://www.sip.tg/docs/rewrite-rules))'
+                  last_used:
+                    type: integer
+                    description: Time when the account was used for a call last time
+                  state:
+                    type: string
+                    description: |-
+                      Account state:
+                      `online` - connected;
+                      `offline` - disconnected;
+                      `error` - connection error;
+                      `restricted` - restricted by tariff plan
+                    enum:
+                      - online
+                      - offline
+                      - error
+                      - restricted
+                  restrictions:
+                    type: array
+                    description: |-
+                      List of restrictions of use the SIP account in accordance with the tariff plan:
+                      `worker` - paid Worker;
+                      `other_users` - assigned a user for the account
+                    uniqueItems: true
+                    items:
+                      type: string
+                      enum:
+                        - worker
+                        - other_users
+                  worker:
+                    type: object
+                    description: Information about used Worker server
+                    required:
+                      - id
+                      - name
+                      - active
+                      - type
+                    properties:
+                      id:
+                        type: string
+                        description: Server ID
+                        pattern: ^\d+$
+                      name:
+                        type: string
+                        description: Server name
+                      active:
+                        type: boolean
+                        description: Status of active server
+                      type:
+                        type: string
+                        description: |-
+                          Server type:
+                          `official` - official SIP.TG server;
+                          `public` - SIP.TG user's public server;
+                          `private` - private server;
+                          `template` - server for SIP template
+                        enum:
+                          - official
+                          - public
+                          - private
+                          - template
+                  user_id:
+                    type: integer
+                    description: (for Softphone mode) Telegram User ID
+                  owner_id:
+                    type: integer
+                    description: (for Softphone mode) ID of the Telegram user who owns a SIP account
+                  template:
+                    type: object
+                    description: (for Softphone mode) Information about the SIP template
+                    properties:
+                      code:
+                        type: string
+                        description: Code of the template
+                      name:
+                        type: string
+                        description: Template name
+                    required:
+                      - code
+                      - name
+                  session_id:
+                    type: string
+                    description: (for Gateway mode) Telegram session ID
+                    pattern: ^\d+$
+                  compatibility_mode:
+                    type: boolean
+                    description: 'Compatibility mode status (see [documentation](https://www.sip.tg/docs/calls-ats))'
+                  username:
+                    type: string
+                    description: '(for account types `softphone`, `pbx-siptg`, `siptg-pbx`) SIP account login'
+                  password:
+                    type: string
+                    description: (for account type `pbx-siptg`) SIP account password
+                  trusted_ips:
+                    type: string
+                    description: (for account type `pbx-siptg`) List of trusted IP addresses
+                  registrar:
+                    type: string
+                    description: '(for account types `softphone`, `siptg-pbx`, `pbx-siptg`) Registration server address'
+                  domain:
+                    type: string
+                    description: '(for account types `softphone`, `siptg-pbx`) Domain value'
+                  transport:
+                    type: string
+                    description: '(for account types `softphone`, `siptg-pbx`) SIP server connection method: `udp`, `tcp` or `tls`'
+                    enum:
+                      - udp
+                      - tcp
+                      - tls
+                  out_number:
+                    type: string
+                    description: '(for account types `siptg-pbx`, `ip-ip`) The number on PBX side to handle Telegram→SIP calls'
+                  offline_since:
+                    type: integer
+                    description: '(for account types `softphone`, `siptg-pbx`) Time of detection of registration problem on external SIP server'
+                  address:
+                    type: string
+                    description: (for account type `ip-ip`) Address of SIP server on the other side
+                  field_value:
+                    type: string
+                    description: '(for account type `ip-ip`) Additional attribute (field) in SIP messages in the format `{field}:{value}`'
+                    pattern: '^\w+:\w+$'
+                required:
+                  - name
+                  - type
+                  - formats
+                  - dtmf
+                  - out_rule
+                  - last_used
+                  - state
+                  - restrictions
+                  - worker
+      operationId: get-sip_account-id
+      description: Returns full details of the specified SIP account
+  '/sip_accounts/{id}/workers':
+    parameters:
+      - schema:
+          type: integer
+        name: id
+        in: path
+        required: true
+        description: SIP account ID
+    get:
+      summary: List of Workers for SIP account
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  offset:
+                    type: integer
+                    description: Real results offset
+                  count:
+                    type: integer
+                    description: Total number of results
+                  workers:
+                    type: array
+                    description: List of found Worker servers
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          description: Server ID
+                          pattern: ^\d+$
+                        name:
+                          type: string
+                          description: Server name
+                        address:
+                          type: string
+                          description: Server address
+                        owner_id:
+                          type: integer
+                          description: Telegram User ID who owns the server
+                          nullable: true
+                        free:
+                          type: boolean
+                          description: Mark of free server
+                        restricted:
+                          type: boolean
+                          description: Mark of restrictions the server by the tariff plan
+                      required:
+                        - id
+                        - name
+                        - address
+                        - owner_id
+                        - free
+                        - restricted
+                required:
+                  - offset
+                  - count
+                  - workers
+      operationId: get-sip_accounts-id-workers
+      description: 'Returns the list of Worker servers available for use with the specified SIP account'
+      parameters:
+        - schema:
+            type: boolean
+          in: query
+          name: auto
+          description: Return one of the most suitable Worker server
+        - schema:
+            type: string
+          in: query
+          name: search
+          description: Search pattern (part of the name, address or owner's username)
+        - schema:
+            type: integer
+          in: query
+          name: offset
+          description: 'Offset from which to display results'
+  '/sip_accounts/{ids}':
+    parameters:
+      - schema:
+          uniqueItems: true
+          type: array
+          items:
+            type: integer
+        name: ids
+        in: path
+        required: true
+        description: 'Comma-separated list of account IDs'
+        style: simple
+    post:
+      summary: Change SIP accounts
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      description: Account ID
+                      pattern: ^\d+$
+                    updated:
+                      type: boolean
+                      description: Marks of updates in SIP account
+                    password:
+                      type: string
+                      format: password
+                      description: (for account type `pbx-siptg`) New password
+                    confirm_uri:
+                      type: string
+                      format: uri
+                      description: '(for account type `ip-ip`) SIP URI address to which initiate INVITE request from the confirming IP address'
+                    worker_id:
+                      type: string
+                      description: The ID of the newly assigned Worker server
+                      pattern: ^\d+$
+                    error:
+                      type: string
+                      description: Error code (if any)
+                    description:
+                      type: string
+                      description: Error description (if any)
+                  required:
+                    - id
+      operationId: post-sip_accounts-ids
+      description: |-
+        Changes one or more (up to 10) SIP accounts.
+
+        Possible **Errors in SIP account change and activation**.
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: Account name
+                formats:
+                  type: string
+                  description: 'List of audio codecs in order of priority (see [documentation](https://www.sip.tg/docs/codecs))'
+                dtmf:
+                  type: string
+                  description: 'List of used DTMF command methods in order of priority (see [documentation](https://www.sip.tg/docs/dtmf))'
+                out_rule:
+                  type: string
+                  description: 'Number conversion rules (see [documentation](https://www.sip.tg/docs/rewrite-rules))'
+                compatibility_mode:
+                  type: boolean
+                  description: 'Compatibility mode (see [documentation](https://www.sip.tg/docs/calls-ats))'
+                user_id:
+                  type: integer
+                  description: (for Softphone mode) New User ID of the Softphone account
+                template_code:
+                  type: string
+                  description: (for Softphone mode) SIP template code
+                username:
+                  type: string
+                  description: '(for `softphone`, `siptg-pbx` account types) SIP account login'
+                password:
+                  type: string
+                  description: '(for account types `softphone`, `pbx-siptg`, `siptg-pbx`) SIP account password; for account type `pbx-siptg` asks to password generation on SIP.TG side'
+                  format: password
+                registrar:
+                  type: string
+                  description: '(for account types `softphone`, `siptg-pbx`) Registration server address'
+                domain:
+                  type: string
+                  description: '(for account types `softphone`, `siptg-pbx`) Domain value'
+                transport:
+                  type: string
+                  description: '(for account types `softphone`, `siptg-pbx`) Method of connection to SIP server'
+                  enum:
+                    - udp
+                    - tcp
+                    - tls
+                trusted_ips:
+                  type: string
+                  description: (for account type `pbx-siptg`) List of trusted IP addresses
+                field_value:
+                  type: string
+                  description: '(for account type `ip-ip`) Additional attribute (field) in SIP messages in format `{field}:{value}`'
+                out_number:
+                  type: string
+                  description: '(for account types `siptg-pbx`, `ip-ip`) Number on PBX side to process Telegram→SIP calls'
+                address:
+                  description: '(for account type `ip-ip`) Initiate procedure to change IP address through its verification'
+                  nullable: true
+                worker_id:
+                  type: integer
+                  description: Worker server ID; use `0` for automatic selection
+                password_check:
+                  type: string
+                  description: '(for account types `softphone`, `siptg-pbx`) Current SIP account password in case new Worker is not trusted (has type other than `official` or `template`)'
+                  format: password
+                reconnect:
+                  type: boolean
+                  description: Reconnect the account after making changes
+                  default: true
+    delete:
+      summary: Delete SIP accounts
+      operationId: delete-sip_accounts-ids
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      description: Account ID
+                      pattern: ^\d+$
+                    deleted:
+                      type: boolean
+                      description: Result of account deletion
+                    error:
+                      type: string
+                      description: Error code (if any)
+                    description:
+                      type: string
+                      description: Error description (if any)
+                  required:
+                    - id
+      description: Deletes one or more (up to 10) SIP accounts
+  '/sip_accounts/{ids}/switch':
+    parameters:
+      - schema:
+          uniqueItems: true
+          type: array
+          items:
+            type: integer
+        name: ids
+        in: path
+        required: true
+        description: 'Comma-separated list of account IDs'
+        style: simple
+    post:
+      summary: 'Enable/disable SIP accounts'
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      description: SIP account ID
+                      pattern: ^\d+$
+                    active:
+                      description: New active status of the account
+                      type: boolean
+                    was_active:
+                      type: boolean
+                      description: (if disable) Previous state of the account
+      operationId: post-sip_accounts-ids-switch
+      description: |-
+        Enables/disables one or more (up to 10) SIP accounts.
+
+        Possible **Errors in SIP account change and activation**.
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                active:
+                  type: boolean
+                  description: Enable/re-enable (`true`) or disable (`false`) the account
+              required:
+                - active
+  /tariffs:
+    get:
+      summary: List of tariff plans
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  offset:
+                    description: Real results offset
+                    type: integer
+                  count:
+                    description: Total number of results
+                    type: integer
+                  tariffs:
+                    type: array
+                    description: Information about tariff plans
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: string
+                          description: Tariff plan code
+                        currency:
+                          type: string
+                          description: Currency
+                        tags:
+                          type: array
+                          uniqueItems: true
+                          description: Tags
+                          items:
+                            type: string
+                            enum:
+                              - softphone
+                              - gateway
+                              - group
+                        name:
+                          type: string
+                          description: Tariff plan name
+                        notes:
+                          type: string
+                          description: Notes for admin
+                        period_type:
+                          type: string
+                          description: Periodicity of payment
+                          enum:
+                            - day
+                            - week
+                            - month
+                            - year
+                        admin_id:
+                          type: integer
+                          description: Telegram User ID of administrator
+                          nullable: true
+                        user_id:
+                          type: integer
+                          description: Telegram User ID who assigned the tariff to
+                        expire:
+                          type: integer
+                          description: Expire date
+                          nullable: true
+                        renew_auto:
+                          type: boolean
+                          description: Status of auto-renewal
+                      required:
+                        - code
+                        - currency
+                        - tags
+                        - name
+                        - notes
+                        - period_type
+                        - admin_id
+                        - user_id
+                        - expire
+                        - renew_auto
+                required:
+                  - offset
+                  - count
+                  - tariffs
+      operationId: get-tariffs
+      description: 'Lists the tariff plans available to the user (new, connected, and under administration)'
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: lang
+          description: Display language of tariff plans info
+        - schema:
+            type: string
+          in: query
+          name: search
+          description: 'Sample search for administered tariff plans (by Telegram ID, phone number, username and notes part)'
+        - schema:
+            type: integer
+          in: query
+          name: offset
+          description: 'Offset from which to display results'
+  '/tariffs/{code}/{user_id}':
+    parameters:
+      - schema:
+          type: string
+        name: code
+        in: path
+        required: true
+        description: Tariff plan code
+      - schema:
+          type: integer
+        name: user_id
+        in: path
+        description: Telegram user ID (`0` for user of token)
+        required: true
+    get:
+      summary: Information about the tariff plan
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    description: Tariff plan code
+                  currency:
+                    type: string
+                    description: Currency
+                  tags:
+                    type: array
+                    uniqueItems: true
+                    description: Tags
+                    items:
+                      type: string
+                      enum:
+                        - softphone
+                        - gateway
+                        - group
+                  name:
+                    type: string
+                    description: Tariff plan name
+                  description:
+                    type: string
+                    description: Tariff plan description
+                  notes:
+                    type: string
+                    description: Notes for admin
+                    nullable: true
+                  period_type:
+                    type: string
+                    enum:
+                      - day
+                      - week
+                      - month
+                      - year
+                    description: Payment period
+                    nullable: true
+                  admin_id:
+                    type: integer
+                    description: Telegram User ID - tariff plan administrator
+                    nullable: true
+                  user_id:
+                    type: integer
+                    description: Telegram User ID who assigned the tariff plan to
+                    nullable: true
+                  expire:
+                    type: integer
+                    description: Expiration date
+                    nullable: true
+                  renew_auto:
+                    type: boolean
+                    description: State of tariff auto-renewal
+                    nullable: true
+                  period_constraints:
+                    type: string
+                    description: Restrictions for the payment periods
+                    nullable: true
+                  options:
+                    type: object
+                    description: Tariff options
+                    additionalProperties: true
+                    properties:
+                      '{code}':
+                        type: object
+                        description: Option `{code}` is used as a key
+                        properties:
+                          type:
+                            type: string
+                            enum:
+                              - fixed
+                              - period
+                            description: |-
+                              Option type:
+                              `fixed` - fixed option, not zeroed;
+                              `period` - periodic option, resets to zero by time
+                          name:
+                            type: string
+                            description: Name of option
+                          value:
+                            description: Value of option
+                            type:
+                              - string
+                              - integer
+                              - boolean
+                          used:
+                            type: integer
+                            description: In case the option is a quota - the current used value
+                          increase_only:
+                            type: boolean
+                            description: In case of updating tariff plan, the new value will be added to the old one
+                          constraints:
+                            type: string
+                            description: Restrictions for the option values
+                            nullable: true
+                          allow_change:
+                            type: boolean
+                            description: Mark allowing changing the option value
+                          period:
+                            type: object
+                            description: Information about periodic option
+                            properties:
+                              type:
+                                type: string
+                                enum:
+                                  - minutely
+                                  - hourly
+                                  - daily
+                                  - weekly
+                                  - monthly
+                                  - yearly
+                                description: Frequency for the option
+                              value:
+                                description: Period value
+                                type: integer
+                              expire:
+                                description: Time when the `used` option value is reset
+                                type: integer
+                            required:
+                              - type
+                              - value
+                              - expire
+                        required:
+                          - type
+                          - name
+                          - value
+                          - increase_only
+                          - constraints
+                          - allow_change
+                required:
+                  - code
+                  - currency
+                  - tags
+                  - name
+                  - description
+                  - notes
+                  - period_type
+                  - admin_id
+                  - user_id
+                  - expire
+                  - renew_auto
+      operationId: get-tariffs-code-user_id
+      description: Returns the full information about the specified tariff plan for the specified user
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: lang
+          description: Language of tariff info display
+    post:
+      summary: Change of tariff plan settings
+      operationId: post-tariffs-code-user_id
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  updated:
+                    description: Result of changes
+                    type: boolean
+                required:
+                  - updated
+      description: Makes changes in plan management
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                renew_auto:
+                  type: boolean
+                  description: Controls auto-renewal status
+                notes:
+                  type: string
+                  description: Adds notes to the tariff
+                admin_id:
+                  type: integer
+                  description: Changes (resets) the tariff plan administrator
+                  nullable: true
+  '/tariffs/{code}/{user_id}/activate':
+    parameters:
+      - schema:
+          type: string
+        name: code
+        in: path
+        required: true
+        description: Tariff plan code
+      - schema:
+          type: string
+        name: user_id
+        in: path
+        required: true
+        description: 'User ID for which the plan is about to activate'
+    post:
+      summary: Activation (renewal) of the tariff plan
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  cost:
+                    type: string
+                    description: The cost of activating the tariff plan (in the currency of the user's token balance)
+                  period:
+                    type: integer
+                    description: Period value of tariff plan extension (with applied restrictions)
+                    nullable: true
+                  expire:
+                    type: integer
+                    description: Current (after activation) expiration date
+                    nullable: true
+                  options:
+                    description: Variable tariff options (with applied restrictions)
+                    type: object
+                    additionalProperties: true
+                    properties:
+                      '{code}':
+                        type:
+                          - string
+                          - integer
+                          - boolean
+                        description: 'Value of the option with `{code}` to change'
+                required:
+                  - cost
+                  - period
+                  - expire
+                  - options
+      operationId: post-tariffs-code-user_id-activate
+      description: |-
+        Activates, extends and changes tariff plan options. The token owner becomes the tariff administrator after activation.
+
+        Possible **Errors in tariff plan activation**.
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              additionalProperties: true
+              properties:
+                period:
+                  type: integer
+                  description: Period of tariff payment; do not specify if there are changes in tariff without its prolongation
+                  nullable: true
+                activate:
+                  type: boolean
+                  default: false
+                  description: Confirmation of tariff activation
+                'options.{code}':
+                  description: 'Indicates the value of the option with code `{code}`'
+                  type:
+                    - string
+                    - integer
+                    - boolean
+components:
+  securitySchemes:
+    TokenAuth:
+      type: http
+      scheme: bearer
+      description: |-
+        You can get the token through @siptg_bot (section [/api](https://t.me/siptg_bot?start=api)).
+        Available only to SIP.TG partner users.
+      bearerFormat: ''
+  schemas: {}
+  headers: {}
+  responses: {}
+  parameters: {}
+  examples: {}
+externalDocs:
+  url: 'https://www.sip.tg/docs'
+tags: []
+servers:
+  - url: 'https://api.sip.tg'
+    description: Production
+    variables: {}
+  - url: 'https://api.sip.tg/dev'
+    description: Debug
+security:
+  - TokenAuth: []
