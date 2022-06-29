@@ -146,7 +146,7 @@ paths:
       tags: []
       parameters:
         - in: query
-          description: 'Search sample (username, id, or phone number)'
+          description: 'Search sample (username, user ID, or phone number)'
           required: false
           deprecated: false
           allowEmptyValue: false
@@ -188,6 +188,17 @@ paths:
                         user_id:
                           type: integer
                           description: Telegram user ID
+                        username:
+                          type:
+                            - string
+                            - 'null'
+                          description: Telegram username
+                        phone:
+                          type:
+                            - string
+                            - 'null'
+                          description: Phone number of the account
+                          pattern: ^\d+$
                         storage_id:
                           type: string
                           description: Sessions storage ID
@@ -198,6 +209,8 @@ paths:
                       required:
                         - id
                         - user_id
+                        - username
+                        - phone
                         - storage_id
                         - active
                 required:
@@ -330,6 +343,17 @@ paths:
                   user_id:
                     type: integer
                     description: Telegram user ID
+                  username:
+                    type:
+                      - string
+                      - 'null'
+                    description: Telegram username of the account
+                  phone:
+                    type:
+                      - string
+                      - 'null'
+                    description: Phone number of the account
+                    pattern: ^\d+$
                   storage_id:
                     type: string
                     description: Session storage ID
@@ -357,6 +381,8 @@ paths:
                     description: Callback feature for calls
                 required:
                   - user_id
+                  - username
+                  - phone
                   - storage_id
                   - active
                   - dtmf_in
