@@ -73,8 +73,8 @@ paths:
     summary: ''
     get:
       tags: []
-      summary: Information about the user of token
-      description: Returns information about the user of token
+      summary: Info about user of token
+      description: Returns the information about the user of token
       responses:
         '200':
           description: OK
@@ -100,6 +100,7 @@ paths:
                   - balance
                   - currency
                   - lang
+              examples: {}
       operationId: get-whoami
     description: ''
   /storages:
@@ -207,7 +208,7 @@ paths:
     description: ''
     post:
       description: Creates a new or prepares a terminated Telegram session for the authorization procedure
-      summary: Create the Telegram session for authorization
+      summary: Create Telegram session for authorization
       parameters: []
       requestBody:
         content:
@@ -245,7 +246,7 @@ paths:
     summary: ''
     post:
       tags: []
-      summary: Telegram session authorization
+      summary: Authorize Telegram session
       description: |-
         Controls the process of creating (authorizing) a new Telegram session.
 
@@ -317,7 +318,7 @@ paths:
       parameters: []
       description: Returns full details of the specified Telegram session
       operationId: get-sessions-id
-      summary: Details about the Telegram session
+      summary: Info about Telegram session
       responses:
         '200':
           description: OK
@@ -366,7 +367,7 @@ paths:
                   - callback
     post:
       tags: []
-      summary: Change the Telegram session
+      summary: Update Telegram session settings
       description: Makes changes to settings of the Telegram session
       requestBody:
         content:
@@ -414,7 +415,7 @@ paths:
         required: true
         description: Session ID
     delete:
-      summary: Terminate a Telegram session
+      summary: Terminate Telegram session
       responses:
         '200':
           description: OK
@@ -457,7 +458,7 @@ paths:
         required: true
         description: Text of the query (phone number or username)
     get:
-      summary: Definition of Telegram User ID
+      summary: Resolve Telegram User ID
       tags: []
       responses:
         '200':
@@ -636,7 +637,7 @@ paths:
           name: offset
           description: Offset from which to display results
     post:
-      summary: SIP account creation
+      summary: Create SIP account
       operationId: post-sip_accounts
       responses:
         '200':
@@ -681,7 +682,7 @@ paths:
         required: true
         description: SIP account ID
     get:
-      summary: Information about the SIP account
+      summary: Info about SIP account
       tags: []
       responses:
         '200':
@@ -937,7 +938,7 @@ paths:
         description: Comma-separated list of account IDs
         style: simple
     post:
-      summary: Change SIP accounts
+      summary: Update SIP accounts settings
       tags: []
       responses:
         '200':
@@ -1247,7 +1248,7 @@ paths:
         description: Telegram user ID (`0` for user of token)
         required: true
     get:
-      summary: Information about the tariff plan
+      summary: Info about tariff plan
       tags: []
       responses:
         '200':
@@ -1404,7 +1405,7 @@ paths:
           name: lang
           description: Language of tariff info display
     post:
-      summary: Change of tariff plan settings
+      summary: Update tariff plan settings
       operationId: post-tariffs-code-user_id
       responses:
         '200':
@@ -1451,7 +1452,7 @@ paths:
         description: User ID for which the plan is about to activate (`0` for user of token)
         required: true
     post:
-      summary: Activation (renewal) of the tariff plan
+      summary: Activate (renew) tariff plan
       tags: []
       responses:
         '200':
