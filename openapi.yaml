@@ -22,6 +22,7 @@ info:
     | `max_accounts` | The limit of the number of objects is exceeded  |
     | `multiple_ids` | Prohibits a group change of the parameter value |
     | `db`           | Database error                                  |
+    | `http_error`   | General HTTP error                              |
     | `unknown`      | Unknown error                                   |
 
     ## Errors in SIP account change and activation
@@ -1537,6 +1538,10 @@ paths:
                       - string
                       - 'null'
                     description: Payment ID in case the tariff plan was activated
+                  payment_url:
+                    type: string
+                    description: URL to pay via bot by user itself
+                    format: uri
                 required:
                   - cost
                   - period
@@ -1545,6 +1550,7 @@ paths:
                   - prices
                   - currency
                   - payment_id
+                  - payment_url
       operationId: post-tariffs-code-user_id-activate
       description: |-
         Activates, extends and changes tariff plan options. The token owner becomes the tariff administrator after activation.
