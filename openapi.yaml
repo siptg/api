@@ -1337,9 +1337,14 @@ paths:
                     description: State of tariff auto-renewal
                     nullable: true
                   period_constraints:
-                    type: string
-                    description: Restrictions for the payment periods
+                    type: array
+                    description: Possible values of the payment period
                     nullable: true
+                    items:
+                      type:
+                        - string
+                        - integer
+                        - boolean
                   options:
                     type: object
                     description: Tariff options
@@ -1374,9 +1379,14 @@ paths:
                             type: boolean
                             description: 'In case of updating tariff plan, the new value will be added to the old one'
                           constraints:
-                            type: string
-                            description: Restrictions for the option values
+                            type: array
+                            description: Possible values of the option
                             nullable: true
+                            items:
+                              type:
+                                - string
+                                - integer
+                                - boolean
                           allow_change:
                             type: boolean
                             description: Mark allowing changing the option value
