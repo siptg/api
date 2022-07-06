@@ -1337,7 +1337,9 @@ paths:
                     description: State of tariff auto-renewal
                     nullable: true
                   period_constraints:
-                    type: array
+                    type:
+                      - array
+                      - 'null'
                     description: Possible values of the payment period
                     nullable: true
                     items:
@@ -1356,13 +1358,14 @@ paths:
                         properties:
                           type:
                             type: string
+                            description: Option type
                             enum:
-                              - fixed
-                              - period
-                            description: |-
-                              Option type:
-                              `fixed` — fixed option, not zeroed;
-                              `period` — periodic option, resets to zero by time
+                              - string
+                              - boolean
+                              - seconds
+                              - decimal
+                              - integer
+                              - unknown
                           name:
                             type: string
                             description: Name of option
@@ -1379,7 +1382,9 @@ paths:
                             type: boolean
                             description: 'In case of updating tariff plan, the new value will be added to the old one'
                           constraints:
-                            type: array
+                            type:
+                              - array
+                              - 'null'
                             description: Possible values of the option
                             nullable: true
                             items:
@@ -1392,7 +1397,7 @@ paths:
                             description: Mark allowing changing the option value
                           period:
                             type: object
-                            description: Information about periodic option
+                            description: Information about periodic option (which resets to zero `value` by the period of time)
                             properties:
                               type:
                                 type: string
@@ -1433,6 +1438,7 @@ paths:
                   - user_id
                   - expire
                   - renew_auto
+                  - period_constraints
       operationId: get-tariffs-code-user_id
       description: Returns the full information about the specified tariff plan for the specified user
       parameters:
@@ -1499,6 +1505,9 @@ paths:
               schema:
                 type: object
                 properties:
+                  active:
+                    type: boolean
+                    description: Mark the tariff is already activated
                   cost:
                     type: string
                     description: The cost of activating the tariff plan (in the currency of the user's token balance)
@@ -1531,15 +1540,15 @@ paths:
                       base:
                         type: string
                         description: Base tariff cost
+                      balance:
+                        type: string
+                        description: Balance changing
                       period_discount:
                         type: string
                         description: Discount for the payment for a multiple period (multiple months; if applicable)
                       partner_discount:
                         type: string
                         description: Partner discount (if applicable)
-                      balance:
-                        type: string
-                        description: Balance changing
                   currency:
                     type: string
                     description: The currency of `cost` and `prices`
@@ -1553,6 +1562,7 @@ paths:
                     description: URL to pay via bot by user itself
                     format: uri
                 required:
+                  - active
                   - cost
                   - period
                   - expire
