@@ -502,6 +502,68 @@ paths:
                   - user_id
       operationId: get-sessions-id-resolve_user-query
       description: Gets the Telegram User ID by phone number or username through the specified session
+  '/sessions/{id}/messages/{code}':
+    parameters:
+      - schema:
+          type: integer
+        name: id
+        in: path
+        required: true
+        description: Session ID
+      - schema:
+          type: string
+          enum:
+            - ERROR_ORIGINATE_DIRECT
+            - ORIGINATE_CHOOSE_LINE
+            - ERROR_ORIGINATE_NO_PROVIDER
+        name: code
+        in: path
+        required: true
+        description: ID of the message
+    get:
+      summary: Get custom messages
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  '{lang}':
+                    type:
+                      - string
+                      - 'null'
+                      - array
+                    description: 'Text of the message in Markdown markup for the language with code `{code}`'
+                    items:
+                      type: string
+      operationId: get-sessions-id-messages-code
+      description: Get the customized messages for auto-reply feature
+    post:
+      summary: Set custom message
+      operationId: post-sessions-id-messages-code
+      responses:
+        '200':
+          description: OK
+      description: Set the customized messages for auto-reply feature
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type:
+                - object
+                - string
+              properties:
+                '{lang}':
+                  type:
+                    - string
+                    - 'null'
+                    - array
+                  description: 'New value of message for the language with code `{code}`; set `null` to return default value'
+                  items:
+                    type: string
   /sip_templates:
     get:
       summary: List of SIP templates
