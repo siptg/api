@@ -221,8 +221,8 @@ paths:
       operationId: get-sessions
     description: ''
     post:
-      description: Creates a new or prepares a terminated Telegram session for the authorization procedure
-      summary: Create Telegram session for authorization
+      description: Creates a new or prepares a terminated Telegram session ID for the authorization procedure
+      summary: Prepare Telegram session for login
       parameters: []
       requestBody:
         content:
@@ -260,7 +260,7 @@ paths:
     summary: ''
     post:
       tags: []
-      summary: Authorize Telegram session
+      summary: Login into Telegram session
       description: |-
         Controls the process of creating (authorizing) a new Telegram session.
 
