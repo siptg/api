@@ -221,7 +221,7 @@ paths:
       operationId: get-sessions
     description: ''
     post:
-      description: Creates a new or prepares a terminated Telegram session ID for the authorization procedure
+      description: Creates a new or prepares a terminated Telegram session ID for the authorization procedure. Prepared for login session is valud during 5 minutes.
       summary: Prepare Telegram session for login
       parameters: []
       requestBody:
