@@ -1605,6 +1605,9 @@ paths:
                       balance:
                         type: string
                         description: Balance changing
+                      recalc:
+                        type: string
+                        description: Recalculation amount in case some options have changed for already activated tariff plan
                       period_discount:
                         type: string
                         description: Discount for the payment for a multiple period (multiple months; if applicable)
