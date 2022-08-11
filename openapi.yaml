@@ -65,6 +65,20 @@ info:
     | `paysystem_error`    | Payment system error                                     |
     | `not_processed`      | Not processed                                            |
     | `no_payment_method`  | No credit card (account) is linked                       |
+
+    ## Errors with promo codes
+    | **Error code** | **Description**                                                        |
+    |----------------|------------------------------------------------------------------------|
+    | `invalid`      | Promo code is not valid                                                |
+    | `tariff`       | Promo code is not valid for the tariff                                 |
+    | `personal`     | Promo code is valid only on the account of its owner                   |
+    | `public`       | Promo code is not valid on the account of its owner                    |
+    | `count_total`  | Promo code was used the maximum number of times                        |
+    | `count_user`   | Promo code was used the maximum number of times on your account        |
+    | `payments`     | Promo code can only be used for the first payment                      |
+    | `refs`         | Promo code can be used only for the first connection with the referrer |
+    | `date_begin`   | Promo code validity has not started yet                                |
+    | `date_end`     | Promo code expired                                                     |
   contact:
     name: SIP.TG support
     url: 'https://t.me/siptg_support'
@@ -96,6 +110,15 @@ paths:
                   lang:
                     type: string
                     description: Language
+                  rewards:
+                    type: object
+                    description: Reward balances
+                    properties:
+                      '{currency}':
+                        type: string
+                        description: 'Rewards amount in `{currency}`'
+                    required:
+                      - '{currency}'
                 required:
                   - user_id
                   - balance
@@ -1640,7 +1663,7 @@ paths:
       description: |-
         Activates, extends and changes tariff plan options. The token owner becomes the tariff administrator after activation.
 
-        Possible **Errors in tariff plan activation**.
+        Possible **Errors in tariff plan activation** and **Errors with promo codes**.
       requestBody:
         content:
           application/x-www-form-urlencoded:
@@ -1662,6 +1685,12 @@ paths:
                     - string
                     - integer
                     - boolean
+                promo_code:
+                  type: string
+                  description: Promo code
+                option_tune:
+                  type: string
+                  description: Option code to make it tuned according to tariff plan duration restrictions
 components:
   securitySchemes:
     TokenAuth:
