@@ -23,13 +23,13 @@ info:
     | `multiple_ids` | Prohibits a group change of the parameter value |
     | `db`           | Database error                                  |
     | `http_error`   | General HTTP error                              |
+    | `tariff`       | Tariff limitations                              |
     | `unknown`      | Unknown error                                   |
 
     ## Errors in SIP account change and activation
     | **Error code**    | **Description**                                                      |
     |-------------------|----------------------------------------------------------------------|
     | `params`          | Invalid connection parameters                                        |
-    | `tariff`          | Tariff limitations                                                   |
     | `timeout`         | SIP server waiting time exceeded                                     |
     | `id`              | SIP account not found                                                |
     | `busy`            | another connection/disconnection operation is active                 |
@@ -230,6 +230,9 @@ paths:
                         active:
                           type: boolean
                           description: Mark of active session
+                        admin_tariff:
+                          type: boolean
+                          description: Share administrator's tariff with this session
                       required:
                         - id
                         - user_id
@@ -237,6 +240,7 @@ paths:
                         - phone
                         - storage_id
                         - active
+                        - admin_tariff
                 required:
                   - offset
                   - count
@@ -403,6 +407,9 @@ paths:
                   callback:
                     type: boolean
                     description: Callback feature for calls
+                  admin_tariff:
+                    type: boolean
+                    description: Share administrator's tariff with this session
                 required:
                   - user_id
                   - username
@@ -415,6 +422,7 @@ paths:
                   - lines
                   - msg_proc
                   - callback
+                  - admin_tariff
     post:
       tags: []
       summary: Update Telegram session settings
@@ -443,6 +451,9 @@ paths:
                 callback:
                   type: boolean
                   description: Callback feature for calls
+                admin_tariff:
+                  type: boolean
+                  description: Share administrator's tariff with this session
       responses:
         '200':
           description: OK
