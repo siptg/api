@@ -921,10 +921,10 @@ paths:
                     pattern: ^\d+$
                   caller_phone:
                     type: string
-                    description: 'Caller ID values priority (one per line). Possible values inside the rule: `{userid}`, `{username}`, `{phone}`.'
+                    description: '(for Gateway mode) Caller ID values priority (one per line). Possible values inside the rule: `{userid}`, `{username}`, `{phone}`.'
                   caller_name:
                     type: string
-                    description: 'Caller Name values priority (one per line). Possible values inside the rule: `{userid}`, `{username}`, `{phone}`, `{name}`, `{name_ascii}`.'
+                    description: '(for Gateway mode) Caller Name values priority (one per line). Possible values inside the rule: `{userid}`, `{username}`, `{phone}`, `{name}`, `{name_ascii}`.'
                   username:
                     type: string
                     description: '(for account types `softphone`, `pbx-siptg`, `siptg-pbx`) SIP account login'
@@ -1129,10 +1129,10 @@ paths:
                   description: 'Number conversion rules (see [documentation](https://www.sip.tg/docs/rewrite-rules))'
                 caller_phone:
                   type: string
-                  description: 'Caller ID values priority (one per line). Possible values inside the rule: `{userid}`, `{username}`, `{phone}`.'
+                  description: '(for Gateway mode) Caller ID values priority (one per line). Possible values inside the rule: `{userid}`, `{username}`, `{phone}`.'
                 caller_name:
                   type: string
-                  description: 'Caller Name values priority (one per line). Possible values inside the rule: `{userid}`, `{username}`, `{phone}`, `{name}`, `{name_ascii}`.'
+                  description: '(for Gateway mode) Caller Name values priority (one per line). Possible values inside the rule: `{userid}`, `{username}`, `{phone}`, `{name}`, `{name_ascii}`.'
                 user_id:
                   type: integer
                   description: (for Softphone mode) New User ID of the Softphone account
