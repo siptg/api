@@ -105,6 +105,15 @@ paths:
                   balance:
                     type: string
                     description: User balance
+                  credit:
+                    type: string
+                    description: Credit limit
+                  credit_expire:
+                    type: integer
+                    description: Expiration timestamp of credit
+                  debt:
+                    type: string
+                    description: Debt to prolong the credit expiration
                   currency:
                     type: string
                     description: Balance currency
