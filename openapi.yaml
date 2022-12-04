@@ -68,18 +68,27 @@ info:
     | `no_payment_method`  | No credit card (account) is linked                       |
 
     ## Errors with promo codes
-    | **Error code** | **Description**                                                        |
-    |----------------|------------------------------------------------------------------------|
-    | `invalid`      | Promo code is not valid                                                |
-    | `tariff`       | Promo code is not valid for the tariff                                 |
-    | `personal`     | Promo code is valid only on the account of its owner                   |
-    | `public`       | Promo code is not valid on the account of its owner                    |
-    | `count_total`  | Promo code was used the maximum number of times                        |
-    | `count_user`   | Promo code was used the maximum number of times on your account        |
-    | `payments`     | Promo code can only be used for the first payment                      |
-    | `refs`         | Promo code can be used only for the first connection with the referrer |
-    | `date_begin`   | Promo code validity has not started yet                                |
-    | `date_end`     | Promo code expired                                                     |
+    | **Error code** | **Description**                                                  |
+    |----------------|------------------------------------------------------------------|
+    | `invalid`      | Code is not valid                                                |
+    | `tariff`       | Code is not valid for the tariff                                 |
+    | `personal`     | Code is valid only on the account of its owner                   |
+    | `public`       | Code is not valid on the account of its owner                    |
+    | `count_total`  | Code was used the maximum number of times                        |
+    | `count_user`   | Code was used the maximum number of times on your account        |
+    | `payments`     | Code can only be used for the first payment                      |
+    | `refs`         | Code can be used only for the first connection with the referrer |
+    | `date_begin`   | Code validity has not started yet                                |
+    | `date_end`     | Code expired                                                     |
+    | `currency`     | Code is not valid for the tariff currency                        |
+
+    ## Errors with balance transfer
+    | **Error code**       | **Description**                   |
+    |----------------------|-----------------------------------|
+    | `currency_missmatch` | Recipient has different balance   |
+    | `forbidden_receive`  | Forbidden to receive the balance  |
+    | `forbidden_send`     | Forbidden to send the balance     |
+    | `insufficient`       | Insufficient funds on the balance |
   contact:
     name: SIP.TG support
     url: 'https://t.me/siptg_support'
@@ -1634,7 +1643,6 @@ paths:
                   options:
                     description: Variable tariff options (with applied restrictions)
                     type: object
-                    additionalProperties: true
                     properties:
                       '{code}':
                         type:
@@ -1661,9 +1669,9 @@ paths:
                       period_discount:
                         type: string
                         description: Discount for the payment for a multiple period (multiple months; if applicable)
-                      partner_discount:
+                      ref_discount:
                         type: string
-                        description: Partner discount (if applicable)
+                        description: Referral discount (if applicable)
                   currency:
                     type: string
                     description: The currency of `cost` and `prices`
@@ -1718,6 +1726,51 @@ paths:
                 option_tune:
                   type: string
                   description: Option code to make it tuned according to tariff plan duration restrictions
+  '/balance/{user_id}/transfer':
+    parameters:
+      - schema:
+          type: integer
+        name: user_id
+        in: path
+        required: true
+        description: User ID which the balance is transferred to
+    post:
+      summary: Balance transfer
+      operationId: post-balance-user_id-transfer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  debit:
+                    type: string
+                    description: The amount to be debited
+                  reward:
+                    type: string
+                    description: The discount amount as a reward
+                  credit:
+                    type: string
+                    description: The amount to be credited (with applied constraints)
+                  transferred:
+                    type: boolean
+      description: |-
+        Transfer balance from the user of toker to user with `user_id`.
+
+        Possible **Errors with balance transfer**.
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                amount:
+                  type: string
+                  description: The amount to be credited
+              required:
+                - amount
 components:
   securitySchemes:
     TokenAuth:
