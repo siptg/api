@@ -1757,7 +1757,7 @@ paths:
                   transferred:
                     type: boolean
       description: |-
-        Transfer balance from the user of toker to user with `user_id`.
+        Transfer balance from the user of token to user with `user_id`.
 
         Possible **Errors with balance transfer**.
       requestBody:
