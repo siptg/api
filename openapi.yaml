@@ -1769,6 +1769,9 @@ paths:
                 amount:
                   type: string
                   description: The amount to be credited
+                transfer:
+                  type: boolean
+                  description: Confirm balance transfer
               required:
                 - amount
 components:
