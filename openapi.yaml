@@ -1774,6 +1774,26 @@ paths:
                   description: Confirm balance transfer
               required:
                 - amount
+  '/receipts/{payment_id}':
+    parameters:
+      - schema:
+          type: integer
+        name: payment_id
+        in: path
+        required: true
+        description: ID of payment transaction
+    get:
+      summary: Get receipt of the payment
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/pdf:
+              schema:
+                type: object
+      operationId: get-receipt-payment_id
+      description: Get PDF receipt of the payment
 components:
   securitySchemes:
     TokenAuth:
