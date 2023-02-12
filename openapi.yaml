@@ -366,12 +366,22 @@ paths:
                 type: object
                 properties:
                   next:
-                    type: string
+                    type:
+                      - string
+                      - array
                     enum:
-                      - code_logn
+                      - phone_input
+                      - code_login
                       - code_recovery
+                      - email_input
+                      - code_email
+                      - bot_token_input
+                      - get_qr_code
+                      - qr_code_wait
                     description: Expected next operation
                     nullable: true
+                    items:
+                      type: string
                   email:
                     type: string
                     description: 2-factor authorization email address pattern
