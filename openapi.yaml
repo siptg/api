@@ -45,15 +45,15 @@ info:
     | `reconnecting`    | (for account type `siptg-pbx` and `softphone`) SIP server is unavailable; reconnecting |
 
     ## Errors in creating a Telegram session
-    | **Error code**        | **Description**                                                            |
-    |-----------------------|----------------------------------------------------------------------------|
-    | `storage_unavailable` | Session storage not available                                              |
-    | `unregistered`        | Phone number not registered in Telegram                                    |
-    | `no_recovery_email`   | No email for 2-factor authorization                                        |
-    | `wrong_state`         | The session state does not allow authorization (see the `expected` field)  |
-    | `wrong_operation`     | The session state does not allow this operation (see the `expected` field) |
-    | `code_invalid`        | An invalid one-time code has been entered                                  |
-    | `telegram_error`      | Telegram error (see `code` and `message` fields)                           |
+    | **Error code**      | **Description**                                                            |
+    |---------------------|----------------------------------------------------------------------------|
+    | `unregistered`      | Phone number not registered in Telegram                                    |
+    | `no_recovery_email` | No email for 2-factor authorization                                        |
+    | `wrong_state`       | The session state does not allow authorization (see the `expected` field)  |
+    | `wrong_operation`   | The session state does not allow this operation (see the `expected` field) |
+    | `code_invalid`      | An invalid one-time code has been entered                                  |
+    | `telegram_error`    | Telegram error (see `code` and `message` fields)                           |
+    | `timeout`           | A time for session creating is out                                         |
 
     ## Errors in tariff plan activation
     | **Error code**       | **Description**                                          |
@@ -326,13 +326,34 @@ paths:
                     - phone_input
                     - code_login
                     - code_recovery
-                  description: Operation of session creation phase
+                    - email_input
+                    - code_email
+                    - bot_token_input
+                    - get_qr_code
+                    - qr_code_wait
+                  description: |-
+                    Operation of session creation phase:
+                    - `phone_input` — start authorization with a phone number scheme;
+                    - `code_login` — input a code from Telegram service account/SMS/Fragment...;
+                    - `code_recovery` — input a recovery code from email;
+                    - `email_input` — an additional step to request email address to send a confirmation code to;
+                    - `code_email` — input a confirmation code from email;
+                    - `bot_token_input` — bot authorization;
+                    - `get_qr_code` — authorization by using QR code;
+                    - `qr_code_wait` — a pooling request for a new QR code or succesfull authorization (do not execute more than once every 5 seconds).
                 phone:
                   type: integer
-                  description: Phone number registered in Telegram
+                  description: (for operation `phone_input`) Phone number registered in Telegram
+                bot_token:
+                  type: string
+                  description: (for operation `bot_token_input`) Bot authorization token
+                email:
+                  type: string
+                  description: (for operation `email_input`) Email address connected with Telegram account
+                  format: email
                 code:
                   type: integer
-                  description: Confirmation code (from the service account or email)
+                  description: '(for operations `code_login`, `code_recovery`, `code_email`) Confirmation code (from the service account or from email)'
               required:
                 - storage_id
                 - operation
@@ -353,8 +374,11 @@ paths:
                     nullable: true
                   email:
                     type: string
-                    description: 2-factor authorization email address mask
+                    description: 2-factor authorization email address pattern
                     format: email
+                  qr_code:
+                    type: string
+                    description: URL for QR code generation
                   password:
                     type: string
                     description: New 2-factor authorization password
