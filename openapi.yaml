@@ -329,7 +329,7 @@ paths:
                     - email_input
                     - code_email
                     - bot_token_input
-                    - get_qr_code
+                    - qr_code_get
                     - qr_code_wait
                   description: |-
                     Operation of session creation phase:
@@ -339,7 +339,7 @@ paths:
                     - `email_input` — an additional step to request email address to send a confirmation code to;
                     - `code_email` — input a confirmation code from email;
                     - `bot_token_input` — bot authorization;
-                    - `get_qr_code` — authorization by using QR code;
+                    - `qr_code_get` — authorization by using QR code;
                     - `qr_code_wait` — a pooling request for a new QR code or succesfull authorization (do not execute more than once every 5 seconds).
                 phone:
                   type: integer
@@ -376,7 +376,7 @@ paths:
                       - email_input
                       - code_email
                       - bot_token_input
-                      - get_qr_code
+                      - qr_code_get
                       - qr_code_wait
                     description: Expected next operation
                     nullable: true
