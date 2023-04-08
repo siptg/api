@@ -1007,7 +1007,7 @@ paths:
                     description: '(for account types `softphone`, `siptg-pbx`) Time of detection of registration problem on external SIP server'
                   address:
                     type: string
-                    description: (for account type `ip-ip`) Address of SIP server on the other side
+                    description: (for account type `ip-ip`) IP address of SIP server on the other side
                   field_value:
                     type: string
                     description: '(for account type `ip-ip`) Additional attribute (field) in SIP messages in the format `{field}:{value}`'
@@ -1140,10 +1140,6 @@ paths:
                       type: string
                       format: password
                       description: (for account type `pbx-siptg`) New password
-                    confirm_uri:
-                      type: string
-                      format: uri
-                      description: (for account type `ip-ip`) SIP URI address to which initiate INVITE request from the confirming IP address
                     worker_id:
                       type: string
                       description: The ID of the newly assigned Worker server
@@ -1221,8 +1217,8 @@ paths:
                   type: string
                   description: '(for account types `siptg-pbx`, `ip-ip`) Number on PBX side to process Telegram→SIP calls'
                 address:
-                  description: (for account type `ip-ip`) Initiate procedure to change IP address through its verification
-                  nullable: true
+                  description: (for account type `ip-ip`) IP address of SIP server on the other side
+                  type: string
                 worker_id:
                   type: integer
                   description: Worker server ID; use `0` for automatic selection
@@ -1233,7 +1229,6 @@ paths:
                 reconnect:
                   type: boolean
                   description: Reconnect the account after making changes
-                  default: true
     delete:
       summary: Delete SIP accounts
       operationId: delete-sip_accounts-ids
