@@ -27,22 +27,22 @@ info:
     | `unknown`      | Unknown error                                   |
 
     ## Errors in SIP account change and activation
-    | **Error code**    | **Description**                                                                        |
-    |-------------------|----------------------------------------------------------------------------------------|
-    | `params`          | Invalid connection parameters                                                          |
-    | `timeout`         | SIP server waiting time exceeded                                                       |
-    | `id`              | SIP account not found                                                                  |
-    | `busy`            | Another connection/disconnection operation is active                                   |
-    | `session`         | Failed to activate the associated Telegram session                                     |
-    | `worker`          | Worker is unavailable                                                                  |
-    | `account`         | Wrong type of SIP account                                                              |
-    | `restricted`      | Option change is prohibited                                                            |
-    | `noauth`          | SIP server returned error 401                                                          |
-    | `forbidden`       | SIP server returned error 403                                                          |
-    | `noroute`         | SIP server returned error 404                                                          |
-    | `no_registrar`    | (for account type `pbx-siptg`) No connection from the PBX                              |
-    | `worker_inactive` | (for account type `ip-ip`) Worker not available to verify IP address                   |
-    | `reconnecting`    | (for account type `siptg-pbx` and `softphone`) SIP server is unavailable; reconnecting |
+    | **Error code**        | **Description**                                                                        |
+    |-----------------------|----------------------------------------------------------------------------------------|
+    | `params`              | Invalid connection parameters                                                          |
+    | `timeout`             | SIP server waiting time exceeded                                                       |
+    | `id`                  | SIP account not found                                                                  |
+    | `busy`                | Another connection/disconnection operation is active                                   |
+    | `session`             | Failed to activate the associated Telegram session                                     |
+    | `worker`              | Worker is unavailable                                                                  |
+    | `account`             | Wrong type of SIP account                                                              |
+    | `restricted`          | Option change is prohibited                                                            |
+    | `noauth`              | SIP server returned error 401                                                          |
+    | `forbidden`           | SIP server returned error 403                                                          |
+    | `noroute`             | SIP server returned error 404                                                          |
+    | `no_registrar`        | (for account type `pbx-siptg`) No connection from the PBX                              |
+    | `address_unavailable` | (for account type `ip-ip`) IP address does not respond to the test request             |
+    | `reconnecting`        | (for account type `siptg-pbx` and `softphone`) SIP server is unavailable; reconnecting |
 
     ## Errors in creating a Telegram session
     | **Error code**      | **Description**                                                            |
