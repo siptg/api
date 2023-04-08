@@ -1229,6 +1229,7 @@ paths:
                 reconnect:
                   type: boolean
                   description: Reconnect the account after making changes
+                  default: true
     delete:
       summary: Delete SIP accounts
       operationId: delete-sip_accounts-ids
