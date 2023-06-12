@@ -1501,7 +1501,6 @@ paths:
                   options:
                     type: object
                     description: Tariff options
-                    additionalProperties: true
                     properties:
                       '{code}':
                         type: object
@@ -1517,6 +1516,23 @@ paths:
                               - decimal
                               - integer
                               - unknown
+                          flags:
+                            type: array
+                            description: |-
+                              Option flags:
+                              `variable` — option can be tuned up by user;
+                              `cumulative` — option can't be decreased and aims to buy the new volume of services;
+                              `activation_only` — option is applied only when tariff plan wasn't active;
+                              `redefinable` — marks the option constraints (or value, pricing, etc.) should be redefined per-user basis.
+                            items:
+                              x-stoplight:
+                                id: g5y0pbtmydowb
+                              type: string
+                              enum:
+                                - variable
+                                - cumulative
+                                - activation_only
+                                - redefinable
                           name:
                             type: string
                             description: Name of option
@@ -1529,9 +1545,6 @@ paths:
                           used:
                             type: integer
                             description: In case the option is a quota — the current used value
-                          increase_only:
-                            type: boolean
-                            description: 'In case of updating tariff plan, the new value will be added to the old one'
                           constraints:
                             type:
                               - array
@@ -1543,9 +1556,6 @@ paths:
                                 - string
                                 - integer
                                 - boolean
-                          allow_change:
-                            type: boolean
-                            description: Mark allowing changing the option value
                           period:
                             type: object
                             description: Information about periodic option (which resets to zero `value` by the period of time)
@@ -1572,11 +1582,10 @@ paths:
                               - expire
                         required:
                           - type
+                          - flags
                           - name
                           - value
-                          - increase_only
                           - constraints
-                          - allow_change
                 required:
                   - code
                   - currency
