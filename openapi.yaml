@@ -48,7 +48,6 @@ info:
     | **Error code**      | **Description**                                                            |
     |---------------------|----------------------------------------------------------------------------|
     | `unregistered`      | Phone number not registered in Telegram                                    |
-    | `no_recovery_email` | No email for 2-factor authorization                                        |
     | `wrong_state`       | The session state does not allow authorization (see the `expected` field)  |
     | `wrong_operation`   | The session state does not allow this operation (see the `expected` field) |
     | `code_invalid`      | An invalid one-time code has been entered                                  |
@@ -331,6 +330,8 @@ paths:
                     - bot_token_input
                     - qr_code_get
                     - qr_code_wait
+                    - password_input
+                    - code_recovery_get
                   description: |-
                     Operation of session creation phase:
                     - `phone_input` — start authorization with a phone number scheme;
@@ -340,20 +341,34 @@ paths:
                     - `code_email` — input a confirmation code from email;
                     - `bot_token_input` — bot authorization;
                     - `qr_code_get` — authorization by using QR code;
-                    - `qr_code_wait` — a pooling request for a new QR code or succesfull authorization (do not execute more than once every 5 seconds).
+                    - `qr_code_wait` — a pooling request for a new QR code or succesfull authorization (do not execute more than once every 5 seconds);
+                    - `password_input` — input 2FA password;
+                    - `code_recovery_get` — an optional step (if `auto_recovery`=false) to request a recovery code by email.
                 phone:
                   type: integer
                   description: (for operation `phone_input`) Phone number registered in Telegram
                 bot_token:
                   type: string
                   description: (for operation `bot_token_input`) Bot authorization token
+                code:
+                  type: integer
+                  description: '(for operations `code_login`, `code_recovery`, `code_email`) Confirmation code (from the service account or from email)'
+                password:
+                  type: string
+                  x-stoplight:
+                    id: 9ny7k15qo4l9q
+                  format: password
+                  description: (for operation `password_input`) 2FA password
                 email:
                   type: string
                   description: (for operation `email_input`) Email address connected with Telegram account
                   format: email
-                code:
-                  type: integer
-                  description: '(for operations `code_login`, `code_recovery`, `code_email`) Confirmation code (from the service account or from email)'
+                auto_recovery:
+                  type: boolean
+                  x-stoplight:
+                    id: ijc5hkrkmaeez
+                  default: true
+                  description: Skip `password_input` operation and automatically use `code_recovery_get` instead
               required:
                 - storage_id
                 - operation
@@ -378,20 +393,22 @@ paths:
                       - bot_token_input
                       - qr_code_get
                       - qr_code_wait
+                      - password_input
+                      - code_recovery_get
                     description: Expected next operation
                     nullable: true
                     items:
                       type: string
                   email:
                     type: string
-                    description: 2-factor authorization email address pattern
+                    description: 2FA email address pattern
                     format: email
                   qr_code:
                     type: string
                     description: URL for QR code generation
                   password:
                     type: string
-                    description: New 2-factor authorization password
+                    description: New 2FA password
                     format: password
                   user_id:
                     type: integer
