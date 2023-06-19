@@ -45,14 +45,15 @@ info:
     | `reconnecting`        | (for account type `siptg-pbx` and `softphone`) SIP server is unavailable; reconnecting |
 
     ## Errors in creating a Telegram session
-    | **Error code**      | **Description**                                                            |
-    |---------------------|----------------------------------------------------------------------------|
-    | `unregistered`      | Phone number not registered in Telegram                                    |
-    | `wrong_state`       | The session state does not allow authorization (see the `expected` field)  |
-    | `wrong_operation`   | The session state does not allow this operation (see the `expected` field) |
-    | `code_invalid`      | An invalid one-time code has been entered                                  |
-    | `telegram_error`    | Telegram error (see `code` and `message` fields)                           |
-    | `timeout`           | A time for session creating is out                                         |
+    | **Error code**     | **Description**                                                            |
+    |--------------------|----------------------------------------------------------------------------|
+    | `unregistered`     | Phone number not registered in Telegram                                    |
+    | `wrong_state`      | The session state does not allow authorization (see the `expected` field)  |
+    | `wrong_operation`  | The session state does not allow this operation (see the `expected` field) |
+    | `code_invalid`     | An invalid one-time code has been entered                                  |
+    | `password_invalid` | An invalid 2FA password has been entered                                   |
+    | `telegram_error`   | Telegram error (see `code` and `message` fields)                           |
+    | `timeout`          | A time for session creating is out                                         |
 
     ## Errors in tariff plan activation
     | **Error code**       | **Description**                                          |
