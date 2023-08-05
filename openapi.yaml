@@ -789,12 +789,14 @@ paths:
                             - offline
                             - error
                             - restricted
+                            - unverified
                           description: |-
                             Account status:
                             `online` — connected;
                             `offline` — disconnected;
                             `error` — connection error;
-                            `restricted` — restricted by tariff plan
+                            `restricted` — restricted by tariff plan;
+                            `unverified` — asigned softphone account must be verified (a succesfull outgoing call should be made through it)
                       required:
                         - id
                         - name
@@ -916,12 +918,14 @@ paths:
                       `online` — connected;
                       `offline` — disconnected;
                       `error` — connection error;
-                      `restricted` — restricted by tariff plan
+                      `restricted` — restricted by tariff plan;
+                      `unverified` — asigned softphone account must be verified (a succesfull outgoing call should be made through it)
                     enum:
                       - online
                       - offline
                       - error
                       - restricted
+                      - unverified
                   restrictions:
                     type: array
                     description: |-
