@@ -424,6 +424,78 @@ paths:
         in: path
         description: Session ID
         required: true
+  '/sessions/{id}/configure':
+    summary: ''
+    post:
+      tags: []
+      summary: Configure Telegram account
+      description: Configure Telegram account related to the session
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                settings:
+                  x-stoplight:
+                    id: lkqovhp6nfw44
+                  description: |-
+                    Setting to be applied to the account.
+                    `calls_off_other_sessions` — disable receiving calls by other Telegram sessions;
+                    `calls_allow_everybody` — allow receiving calls from all Telegram users, not only from contacts;
+                    `calls_allow_p2p` — allow peer-to-peer calls;
+                    `groups_disallow` — disallow inviting the account to groups.
+                  type: array
+                  items:
+                    x-stoplight:
+                      id: 0xiny95h3utzc
+                    type: string
+                    enum:
+                      - calls_off_other_sessions
+                      - calls_allow_everybody
+                      - calls_allow_p2p
+                      - groups_disallow
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  configured:
+                    type: boolean
+                    x-stoplight:
+                      id: pp5k2bipupmr4
+                    description: Result of configuring the account
+                  error:
+                    type: string
+                    x-stoplight:
+                      id: es6ew58wqt9zm
+                    description: Error code
+                  settings:
+                    type: array
+                    x-stoplight:
+                      id: cxljsk4lxklsm
+                    description: Lists options which was not applied in full
+                    items:
+                      x-stoplight:
+                        id: vdf4cddi4bjih
+                      enum:
+                        - calls_off_other_sessions
+                        - calls_allow_everybody
+                        - calls_allow_p2p
+                        - groups_disallow
+      operationId: post-sessions-id-configure
+      x-stoplight:
+        id: c0teytpn1c2zn
+    parameters:
+      - schema:
+          type: integer
+        name: id
+        in: path
+        description: Session ID
+        required: true
   '/sessions/{id}':
     get:
       tags: []
