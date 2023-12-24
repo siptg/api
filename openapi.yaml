@@ -252,6 +252,11 @@ paths:
                         admin_tariff:
                           type: boolean
                           description: Share administrator's tariff with this session
+                        notes:
+                          type: string
+                          x-stoplight:
+                            id: y0mdk4vm8zqve
+                          description: Notes for admin
                       required:
                         - id
                         - user_id
@@ -260,6 +265,7 @@ paths:
                         - storage_id
                         - active
                         - admin_tariff
+                        - notes
                 required:
                   - offset
                   - count
@@ -553,6 +559,11 @@ paths:
                   admin_tariff:
                     type: boolean
                     description: Share administrator's tariff with this session
+                  notes:
+                    type: string
+                    x-stoplight:
+                      id: 2t5241z80ztpv
+                    description: Notes for admin
                 required:
                   - user_id
                   - username
@@ -566,6 +577,7 @@ paths:
                   - msg_proc
                   - callback
                   - admin_tariff
+                  - notes
     post:
       tags: []
       summary: Update Telegram session settings
