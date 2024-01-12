@@ -703,8 +703,9 @@ paths:
           type: string
           enum:
             - ERROR_ORIGINATE_DIRECT
-            - ORIGINATE_CHOOSE_LINE
+            - ERROR_ORIGINATE_DIRECT_CALLBACK_ON
             - ERROR_ORIGINATE_NO_PROVIDER
+            - ORIGINATE_CHOOSE_LINE
         name: code
         in: path
         required: true
