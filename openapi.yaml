@@ -212,6 +212,12 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                  - offset
+                  - count
+                  - count_tariff_shared
+                  - count_tariff_allowed
+                  - sessions
                 properties:
                   offset:
                     type: integer
@@ -219,10 +225,29 @@ paths:
                   count:
                     type: integer
                     description: Total number of results
+                  count_tariff_shared:
+                    type: integer
+                    x-stoplight:
+                      id: wl5f0inncznpu
+                    description: Amount of sessions sharing your tariff with
+                  count_tariff_allowed:
+                    type: integer
+                    x-stoplight:
+                      id: u63g7eqqscggd
+                    description: Allowed amount of sessions to share your tariff with
                   sessions:
                     type: array
                     items:
                       type: object
+                      required:
+                        - id
+                        - user_id
+                        - username
+                        - phone
+                        - storage_id
+                        - active
+                        - admin_tariff
+                        - notes
                       properties:
                         id:
                           type: string
@@ -257,19 +282,6 @@ paths:
                           x-stoplight:
                             id: y0mdk4vm8zqve
                           description: Notes for admin
-                      required:
-                        - id
-                        - user_id
-                        - username
-                        - phone
-                        - storage_id
-                        - active
-                        - admin_tariff
-                        - notes
-                required:
-                  - offset
-                  - count
-                  - sessions
       operationId: get-sessions
     description: ''
     post:
@@ -839,6 +851,11 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                  - count
+                  - offset
+                  - count_active
+                  - count_allowed
                 properties:
                   count:
                     type: integer
@@ -846,11 +863,26 @@ paths:
                   offset:
                     type: integer
                     description: The actual offset of the results
+                  count_active:
+                    type: integer
+                    x-stoplight:
+                      id: 687vvyjog6ufo
+                    description: Amount of active SIP accounts
+                  count_allowed:
+                    type: integer
+                    x-stoplight:
+                      id: ovh78jy2gfnjs
+                    description: Amount of SIP accounts allowed to be active
                   sip_accounts:
                     type: array
                     description: List of found SIP accounts
                     items:
                       type: object
+                      required:
+                        - id
+                        - name
+                        - type
+                        - state
                       properties:
                         id:
                           type: string
@@ -882,14 +914,6 @@ paths:
                             `error` — connection error;
                             `restricted` — restricted by tariff plan;
                             `unverified` — asigned softphone account must be verified (a succesfull outgoing call should be made through it)
-                      required:
-                        - id
-                        - name
-                        - type
-                        - state
-                required:
-                  - count
-                  - offset
       operationId: get-sip_accounts
       description: Lists the user's SIP accounts
       parameters:
@@ -954,6 +978,70 @@ paths:
               required:
                 - type
     parameters: []
+  /sip_accounts/encode:
+    post:
+      summary: Encode SIP credentials
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - hash
+                  - url
+                properties:
+                  hash:
+                    type: string
+                    x-stoplight:
+                      id: 25zd4bt90vn00
+                    description: Hash ID
+                  url:
+                    type: string
+                    x-stoplight:
+                      id: fgnw5xbmhpdoi
+                    description: Final URL containing hashed ID to share SIP credentials
+      operationId: post-sip_accounts-encode
+      x-stoplight:
+        id: yu2paqyt1pell
+      description: Encode SIP credentials of Softphone into the hashed ID for sharing with a URL link
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required:
+                - username
+                - password
+              properties:
+                username:
+                  type: string
+                  x-stoplight:
+                    id: 9kmg99cigxryf
+                  description: 'Username of SIP account; in case Authorization ID is different, use the form `username:authID`'
+                password:
+                  type: string
+                  x-stoplight:
+                    id: lleum2nnosbpq
+                  description: Password of SIP account
+                template_code:
+                  type: string
+                  x-stoplight:
+                    id: wtmuv8vtyq4mp
+                  description: 'Template code of SIP provider (to allocate one, contact [@siptg_support](https://t.me/siptg_support))'
+                registrar:
+                  type: string
+                  x-stoplight:
+                    id: 6oucxsn4ov37f
+                  description: SIP server registrar (also known as SIP Proxy); can be omited if `template_code` is specified
+                domain:
+                  type: string
+                  x-stoplight:
+                    id: 3kshwjom90sjp
+                  description: Domain name of SIP account
+      security: []
   '/sip_accounts/{id}':
     parameters:
       - schema:
@@ -1296,7 +1384,7 @@ paths:
                   description: (for Softphone mode) SIP template code
                 username:
                   type: string
-                  description: '(for `softphone`, `siptg-pbx` account types) SIP account login'
+                  description: '(for `softphone`, `siptg-pbx` account types) SIP account login; in case Authorization ID is different, use the form `username:authID`'
                 password:
                   type: string
                   description: '(for account types `softphone`, `pbx-siptg`, `siptg-pbx`) SIP account password; for account type `pbx-siptg` asks to password generation on SIP.TG side'
