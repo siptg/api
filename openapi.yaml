@@ -1060,6 +1060,16 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                  - name
+                  - type
+                  - formats
+                  - dtmf
+                  - out_rule
+                  - last_used
+                  - state
+                  - restrictions
+                  - worker
                 properties:
                   name:
                     type: string
@@ -1152,6 +1162,9 @@ paths:
                   template:
                     type: object
                     description: (for Softphone mode) Information about the SIP template
+                    required:
+                      - code
+                      - name
                     properties:
                       code:
                         type: string
@@ -1159,9 +1172,6 @@ paths:
                       name:
                         type: string
                         description: Template name
-                    required:
-                      - code
-                      - name
                   session_id:
                     type: string
                     description: (for Gateway mode) Telegram session ID
@@ -1207,16 +1217,16 @@ paths:
                     type: string
                     description: '(for account type `ip-ip`) Additional attribute (field) in SIP messages in the format `{field}:{value}`'
                     pattern: '^\w+:\w+$'
-                required:
-                  - name
-                  - type
-                  - formats
-                  - dtmf
-                  - out_rule
-                  - last_used
-                  - state
-                  - restrictions
-                  - worker
+                  recorder_active:
+                    type: boolean
+                    x-stoplight:
+                      id: 77dp1ujtlplyr
+                    description: (for Softphone mode) Default state of call recording for the account
+                  recorder_chat_id:
+                    type: integer
+                    x-stoplight:
+                      id: 6ypx9qxdrddeq
+                    description: '(for Softphone mode) Chat ID to send recordings to, @siptg_bot should be a member of the chat'
       operationId: get-sip_account-id
       description: Returns full details of the specified SIP account
   '/sip_accounts/{id}/workers':
@@ -1421,6 +1431,16 @@ paths:
                   type: string
                   description: '(for account types `softphone`, `siptg-pbx`) Current SIP account password in case new Worker is not trusted (has type other than `official` or `template`)'
                   format: password
+                recorder_active:
+                  type: boolean
+                  x-stoplight:
+                    id: wwlg84308ke1s
+                  description: Record of all calls for the account by default
+                recorder_chat_id:
+                  type: integer
+                  x-stoplight:
+                    id: xpss3v3dpujsc
+                  description: 'Chat ID to send recordings to, @siptg_bot should be a member of the chat'
                 reconnect:
                   type: boolean
                   description: Reconnect the account after making changes
