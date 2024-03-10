@@ -1435,12 +1435,12 @@ paths:
                   type: boolean
                   x-stoplight:
                     id: wwlg84308ke1s
-                  description: Record of all calls for the account by default
+                  description: (for Softphone mode) Record of all calls for the account by default
                 recorder_chat_id:
                   type: integer
                   x-stoplight:
                     id: xpss3v3dpujsc
-                  description: 'Chat ID to send recordings to, @siptg_bot should be a member of the chat'
+                  description: '(for Softphone mode) Chat ID to send recordings to, @siptg_bot should be a member of the chat'
                 reconnect:
                   type: boolean
                   description: Reconnect the account after making changes
