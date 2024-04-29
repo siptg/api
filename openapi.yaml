@@ -738,7 +738,7 @@ paths:
                       - string
                       - 'null'
                       - array
-                    description: 'Text of the message in Markdown markup for the language with code `{code}`'
+                    description: 'Text of the message in HTML markup for the language with code `{code}`'
                     items:
                       type: string
       operationId: get-sessions-id-messages-code
@@ -763,7 +763,7 @@ paths:
                     - string
                     - 'null'
                     - array
-                  description: 'New value of message for the language with code `{code}`; set `null` to return default value'
+                  description: 'New value of message in HTML markup for the language with code `{code}`; set `null` to return default value'
                   items:
                     type: string
   /sip_templates:
