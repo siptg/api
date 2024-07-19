@@ -334,6 +334,9 @@ paths:
           application/x-www-form-urlencoded:
             schema:
               type: object
+              required:
+                - storage_id
+                - operation
               properties:
                 storage_id:
                   type: integer
@@ -343,6 +346,7 @@ paths:
                   enum:
                     - phone_input
                     - code_login
+                    - code_recovery_get
                     - code_recovery
                     - email_input
                     - code_email
@@ -350,19 +354,18 @@ paths:
                     - qr_code_get
                     - qr_code_wait
                     - password_input
-                    - code_recovery_get
                   description: |-
                     Operation of session creation phase:
                     - `phone_input` — start authorization with a phone number scheme;
                     - `code_login` — input a code from Telegram service account/SMS/Fragment...;
+                    - `code_recovery_get` — request a recovery code by email;
                     - `code_recovery` — input a recovery code from email;
                     - `email_input` — an additional step to request email address to send a confirmation code to;
                     - `code_email` — input a confirmation code from email;
                     - `bot_token_input` — bot authorization;
                     - `qr_code_get` — authorization by using QR code;
                     - `qr_code_wait` — a pooling request for a new QR code or succesfull authorization (do not execute more than once every 5 seconds);
-                    - `password_input` — input 2FA password;
-                    - `code_recovery_get` — an optional step (if `auto_recovery`=false) to request a recovery code by email.
+                    - `password_input` — input 2FA password.
                 phone:
                   type: integer
                   description: (for operation `phone_input`) Phone number registered in Telegram
@@ -382,15 +385,6 @@ paths:
                   type: string
                   description: (for operation `email_input`) Email address connected with Telegram account
                   format: email
-                auto_recovery:
-                  type: boolean
-                  x-stoplight:
-                    id: ijc5hkrkmaeez
-                  default: true
-                  description: Skip `password_input` operation and automatically use `code_recovery_get` instead
-              required:
-                - storage_id
-                - operation
       responses:
         '200':
           description: OK
