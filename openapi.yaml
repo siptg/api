@@ -712,6 +712,7 @@ paths:
             - ERROR_ORIGINATE_DIRECT_CALLBACK_ON
             - ERROR_ORIGINATE_NO_PROVIDER
             - ORIGINATE_CHOOSE_LINE
+            - ERROR_CALLER_ID_UNKNOWN
         name: code
         in: path
         required: true
