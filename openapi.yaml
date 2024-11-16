@@ -522,15 +522,31 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                  - user_id
+                  - username
+                  - phone
+                  - storage_id
+                  - active
+                  - dtmf_in
+                  - dtmf_out
+                  - redial
+                  - lines
+                  - msg_proc
+                  - callback
+                  - admin_tariff
+                  - notes
+                  - empty_bot_user_id
+                  - empty_bot_query
                 properties:
                   user_id:
                     type: integer
                     description: Telegram user ID
                   username:
+                    description: Telegram username of the account
                     type:
                       - string
                       - 'null'
-                    description: Telegram username of the account
                   phone:
                     type:
                       - string
@@ -570,20 +586,18 @@ paths:
                     x-stoplight:
                       id: 2t5241z80ztpv
                     description: Notes for admin
-                required:
-                  - user_id
-                  - username
-                  - phone
-                  - storage_id
-                  - active
-                  - dtmf_in
-                  - dtmf_out
-                  - redial
-                  - lines
-                  - msg_proc
-                  - callback
-                  - admin_tariff
-                  - notes
+                  empty_bot_user_id:
+                    type:
+                      - integer
+                      - 'null'
+                    x-stoplight:
+                      id: hc1vq4ayx1xsw
+                    description: Inline bot user ID to use when no SIP accounts satisfies to call through
+                  empty_bot_query:
+                    type: string
+                    x-stoplight:
+                      id: l9p8ighid4mfk
+                    description: Inline bot query format
     post:
       tags: []
       summary: Update Telegram session settings
@@ -615,6 +629,19 @@ paths:
                 admin_tariff:
                   type: boolean
                   description: Share administrator's tariff with this session
+                empty_bot_user_id:
+                  type: integer
+                  x-stoplight:
+                    id: qs7v0yan9z1f4
+                  description: Inline bot user ID to use when no SIP accounts satisfies to call through; use `0` to reset
+                empty_bot_query:
+                  type: string
+                  x-stoplight:
+                    id: agqvvy5o9fv90
+                  description: |-
+                    Inline bot query format; supports variables:
+                    `{text}` — text of the message from user;
+                    `{userid}` — user ID.
       responses:
         '200':
           description: OK
