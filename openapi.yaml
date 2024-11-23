@@ -1249,6 +1249,13 @@ paths:
                     x-stoplight:
                       id: 6ypx9qxdrddeq
                     description: '(for Softphone mode) Chat ID to send recordings to, @siptg_bot should be a member of the chat'
+                  priority:
+                    type: integer
+                    x-stoplight:
+                      id: c69v0lhqkxepm
+                    minimum: 0
+                    maximum: 255
+                    description: (for Gateway mode) Call priority for Telegram→SIP calls
       operationId: get-sip_account-id
       description: Returns full details of the specified SIP account
   '/sip_accounts/{id}/workers':
@@ -1463,6 +1470,13 @@ paths:
                   x-stoplight:
                     id: xpss3v3dpujsc
                   description: '(for Softphone mode) Chat ID to send recordings to, @siptg_bot should be a member of the chat'
+                priority:
+                  type: integer
+                  x-stoplight:
+                    id: x123a0tsw6qkn
+                  minimum: 0
+                  maximum: 255
+                  description: (for Gateway mode) Call priority for Telegram→SIP calls
                 reconnect:
                   type: boolean
                   description: Reconnect the account after making changes
