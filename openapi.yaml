@@ -1606,7 +1606,7 @@ paths:
                   type: integer
                   x-stoplight:
                     id: 3y2gmisb2pecr
-                  description: Telegram user ID to deliver the call to
+                  description: Telegram user ID to deliver the call to. You can use `0` in case of Softphone SIP account.
                 number:
                   type: string
                   x-stoplight:
