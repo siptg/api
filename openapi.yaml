@@ -1561,6 +1561,57 @@ paths:
                   description: Enable/re-enable (`true`) or disable (`false`) the account
               required:
                 - active
+  '/sip_accounts/{id}/call':
+    parameters:
+      - schema:
+          type: integer
+        name: id
+        in: path
+        required: true
+        description: SIP account ID
+    post:
+      summary: Originate a call
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - callback
+                properties:
+                  callback:
+                    type: boolean
+                    x-stoplight:
+                      id: 7x5l9i3yooyds
+                    description: |-
+                      Was or not a callback method used.
+                      `false` requires outgoing call from the user to your gateway Telegram account in the next minute (you have to notify the user about it).
+      operationId: post-sip_accounts-id-call
+      x-stoplight:
+        id: svf8rprcr8m92
+      description: Originate a call with a specified Telegram user and a number on PBX side.
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required:
+                - user_id
+                - number
+              properties:
+                user_id:
+                  type: integer
+                  x-stoplight:
+                    id: 3y2gmisb2pecr
+                  description: Telegram user ID to deliver the call to
+                number:
+                  type: string
+                  x-stoplight:
+                    id: 2f7sl7nql1l0r
+                  description: Phone number to call
   /tariffs:
     get:
       summary: List of tariff plans
