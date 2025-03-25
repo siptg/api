@@ -1966,6 +1966,17 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                  - active
+                  - cost
+                  - period
+                  - expire
+                  - options
+                  - prices
+                  - currency
+                  - payment_id
+                  - payment_url
+                  - order_id
                 properties:
                   active:
                     type: boolean
@@ -2025,16 +2036,13 @@ paths:
                     type: string
                     description: URL to pay via bot by user itself
                     format: uri
-                required:
-                  - active
-                  - cost
-                  - period
-                  - expire
-                  - options
-                  - prices
-                  - currency
-                  - payment_id
-                  - payment_url
+                  order_id:
+                    type:
+                      - integer
+                      - 'null'
+                    x-stoplight:
+                      id: og6tfuyhycuo1
+                    description: New Order ID in case the tariff plan was activated
       operationId: post-tariffs-code-user_id-activate
       description: |-
         Activates, extends and changes tariff plan options. The token owner becomes the tariff administrator after activation.
@@ -2045,7 +2053,6 @@ paths:
           application/x-www-form-urlencoded:
             schema:
               type: object
-              additionalProperties: true
               properties:
                 period:
                   type: integer
@@ -2067,6 +2074,11 @@ paths:
                 option_tune:
                   type: string
                   description: Option code to make it tuned according to tariff plan duration restrictions
+                order_id:
+                  type: integer
+                  x-stoplight:
+                    id: wfjuy62va0aud
+                  description: Order ID of previous tariff activation to inherit settings from
   '/balance/{user_id}/transfer':
     parameters:
       - schema:
