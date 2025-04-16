@@ -23,7 +23,7 @@ info:
     | `multiple_ids` | Prohibits a group change of the parameter value |
     | `db`           | Database error                                  |
     | `http_error`   | General HTTP error                              |
-    | `tariff`       | Tariff limitations                              |
+    | `tariff`       | Subscription limitations                        |
     | `unknown`      | Unknown error                                   |
 
     ## Errors in SIP account change and activation
@@ -55,13 +55,13 @@ info:
     | `telegram_error`   | Telegram error (see `code` and `message` fields)                           |
     | `timeout`          | A time for session creating is out                                         |
 
-    ## Errors in tariff plan activation
+    ## Errors in subscription activation
     | **Error code**       | **Description**                                          |
     |----------------------|----------------------------------------------------------|
     | `insufficient`       | Insufficient balance (see `cost` and `underpaid` fields) |
     | `already_paid`       | Invoice has already been paid                            |
     | `incorrect_currency` | Incorrect currency                                       |
-    | `activate_denied`    | Activation of the tariff is not allowed                  |
+    | `activate_denied`    | Activation of the subscription is not allowed            |
     | `no_changes`         | No changes                                               |
     | `paysystem_error`    | Payment system error                                     |
     | `not_processed`      | Not processed                                            |
@@ -71,7 +71,7 @@ info:
     | **Error code** | **Description**                                                  |
     |----------------|------------------------------------------------------------------|
     | `invalid`      | Code is not valid                                                |
-    | `tariff`       | Code is not valid for the tariff                                 |
+    | `tariff`       | Code is not valid for the subscription                           |
     | `personal`     | Code is valid only on the account of its owner                   |
     | `public`       | Code is not valid on the account of its owner                    |
     | `count_total`  | Code was used the maximum number of times                        |
@@ -80,7 +80,7 @@ info:
     | `refs`         | Code can be used only for the first connection with the referrer |
     | `date_begin`   | Code validity has not started yet                                |
     | `date_end`     | Code expired                                                     |
-    | `currency`     | Code is not valid for the tariff currency                        |
+    | `currency`     | Code is not valid for the subscription currency                  |
 
     ## Errors with balance transfer
     | **Error code**       | **Description**                   |
@@ -247,7 +247,7 @@ paths:
                         - storage_id
                         - active
                         - admin_tariff
-                        - notes
+                        - comment
                       properties:
                         id:
                           type: string
@@ -276,12 +276,12 @@ paths:
                           description: Mark of active session
                         admin_tariff:
                           type: boolean
-                          description: Share administrator's tariff with this session
-                        notes:
+                          description: Share administrator's subscription with this session
+                        comment:
                           type: string
                           x-stoplight:
                             id: y0mdk4vm8zqve
-                          description: Notes for admin
+                          description: Comment for admin
       operationId: get-sessions
     description: ''
     post:
@@ -535,7 +535,7 @@ paths:
                   - msg_proc
                   - callback
                   - admin_tariff
-                  - notes
+                  - comment
                   - empty_bot_user_id
                   - empty_bot_query
                 properties:
@@ -580,12 +580,12 @@ paths:
                     description: Callback feature for calls
                   admin_tariff:
                     type: boolean
-                    description: Share administrator's tariff with this session
-                  notes:
+                    description: Share administrator's subscription with this session
+                  comment:
                     type: string
                     x-stoplight:
                       id: 2t5241z80ztpv
-                    description: Notes for admin
+                    description: Comment for admin
                   empty_bot_user_id:
                     type:
                       - integer
@@ -628,7 +628,7 @@ paths:
                   description: Callback feature for calls
                 admin_tariff:
                   type: boolean
-                  description: Share administrator's tariff with this session
+                  description: Share administrator's subscription with this session
                 empty_bot_user_id:
                   type: integer
                   x-stoplight:
@@ -934,7 +934,7 @@ paths:
                             `online` — connected;
                             `offline` — disconnected;
                             `error` — connection error;
-                            `restricted` — restricted by tariff plan;
+                            `restricted` — restricted by subscription;
                             `unverified` — asigned softphone account must be verified (a succesfull outgoing call should be made through it)
       operationId: get-sip_accounts
       description: Lists the user's SIP accounts
@@ -1123,7 +1123,7 @@ paths:
                       `online` — connected;
                       `offline` — disconnected;
                       `error` — connection error;
-                      `restricted` — restricted by tariff plan;
+                      `restricted` — restricted by subscription;
                       `unverified` — asigned softphone account must be verified (a succesfull outgoing call should be made through it)
                     enum:
                       - online
@@ -1134,7 +1134,7 @@ paths:
                   restrictions:
                     type: array
                     description: |-
-                      List of restrictions of use the SIP account in accordance with the tariff plan:
+                      List of restrictions of use the SIP account in accordance with the subscription:
                       `worker` — paid Worker;
                       `other_users` — assigned a user for the account
                     uniqueItems: true
@@ -1308,7 +1308,7 @@ paths:
                           description: Mark of free server
                         restricted:
                           type: boolean
-                          description: Mark of restrictions the server by the tariff plan
+                          description: Mark of restrictions the server by the subscription
                       required:
                         - id
                         - name
@@ -1614,7 +1614,7 @@ paths:
                   description: Phone number to call
   /tariffs:
     get:
-      summary: List of tariff plans
+      summary: List of subscriptions
       tags: []
       responses:
         '200':
@@ -1632,13 +1632,13 @@ paths:
                     type: integer
                   tariffs:
                     type: array
-                    description: Information about tariff plans
+                    description: Information about subscriptions
                     items:
                       type: object
                       properties:
                         code:
                           type: string
-                          description: Tariff plan code
+                          description: Subscription code
                         currency:
                           type: string
                           description: Currency
@@ -1654,10 +1654,10 @@ paths:
                               - group
                         name:
                           type: string
-                          description: Tariff plan name
-                        notes:
+                          description: Subscription name
+                        comment:
                           type: string
-                          description: Notes for admin
+                          description: Comment for admin
                         period_type:
                           type: string
                           description: Periodicity of payment
@@ -1668,11 +1668,11 @@ paths:
                             - year
                         admin_id:
                           type: integer
-                          description: Telegram User ID of administrator
+                          description: Telegram User ID of the subscription payer
                           nullable: true
                         user_id:
                           type: integer
-                          description: Telegram User ID who assigned the tariff to
+                          description: Telegram User ID of the subscription customer
                         expire:
                           type: integer
                           description: Expire date
@@ -1685,7 +1685,7 @@ paths:
                         - currency
                         - tags
                         - name
-                        - notes
+                        - comment
                         - period_type
                         - admin_id
                         - user_id
@@ -1696,18 +1696,18 @@ paths:
                   - count
                   - tariffs
       operationId: get-tariffs
-      description: 'Lists the tariff plans available to the user (new, connected, and under administration)'
+      description: 'Lists subscriptions available to the user (new, connected, and under administration)'
       parameters:
         - schema:
             type: string
           in: query
           name: lang
-          description: Display language of tariff plans info
+          description: Display language of subscriptions info
         - schema:
             type: string
           in: query
           name: search
-          description: 'Sample search for administered tariff plans (by Telegram ID, phone number, username and notes part)'
+          description: 'Sample search for administered subscriptions (by Telegram ID, phone number, username and comment part)'
         - schema:
             type: integer
           in: query
@@ -1720,7 +1720,7 @@ paths:
         name: code
         in: path
         required: true
-        description: Tariff plan code
+        description: Subscription code
       - schema:
           type: integer
         name: user_id
@@ -1728,7 +1728,7 @@ paths:
         description: Telegram user ID (`0` for user of token)
         required: true
     get:
-      summary: Info about tariff plan
+      summary: Info about subscription
       tags: []
       responses:
         '200':
@@ -1740,7 +1740,7 @@ paths:
                 properties:
                   code:
                     type: string
-                    description: Tariff plan code
+                    description: Subscription code
                   currency:
                     type: string
                     description: Currency
@@ -1756,13 +1756,13 @@ paths:
                         - group
                   name:
                     type: string
-                    description: Tariff plan name
+                    description: Subscription name
                   description:
                     type: string
-                    description: Tariff plan description
-                  notes:
+                    description: Subscription description
+                  comment:
                     type: string
-                    description: Notes for admin
+                    description: Comment for admin
                     nullable: true
                   period_type:
                     type: string
@@ -1775,11 +1775,11 @@ paths:
                     nullable: true
                   admin_id:
                     type: integer
-                    description: Telegram User ID of the tariff plan administrator
+                    description: Telegram User ID of the subscription payer
                     nullable: true
                   user_id:
                     type: integer
-                    description: Telegram User ID who assigned the tariff plan to
+                    description: Telegram User ID of the subscription customer
                     nullable: true
                   expire:
                     type: integer
@@ -1787,7 +1787,7 @@ paths:
                     nullable: true
                   renew_auto:
                     type: boolean
-                    description: State of tariff auto-renewal
+                    description: State of subscription auto-renewal
                     nullable: true
                   period_constraints:
                     type:
@@ -1802,7 +1802,7 @@ paths:
                         - boolean
                   options:
                     type: object
-                    description: Tariff options
+                    description: Subscription options
                     properties:
                       '{code}':
                         type: object
@@ -1824,8 +1824,9 @@ paths:
                               Option flags:
                               `variable` — option can be tuned up by user;
                               `cumulative` — option can't be decreased and aims to buy the new volume of services;
-                              `activation_only` — option is applied only when tariff plan wasn't active;
-                              `redefinable` — marks the option constraints (or value, pricing, etc.) should be redefined per-user basis.
+                              `activation_only` — option is applied only when subscription wasn't active;
+                              `redefinable` — marks the option constraints (or value, pricing, etc.) should be redefined per-user basis;
+                              `non_refundable` — prohibition of recalculation in case of subscription reduction.
                             items:
                               x-stoplight:
                                 id: g5y0pbtmydowb
@@ -1894,7 +1895,7 @@ paths:
                   - tags
                   - name
                   - description
-                  - notes
+                  - comment
                   - period_type
                   - admin_id
                   - user_id
@@ -1902,15 +1903,15 @@ paths:
                   - renew_auto
                   - period_constraints
       operationId: get-tariffs-code-user_id
-      description: Returns the full information about the specified tariff plan for the specified user
+      description: Returns the full information about the specified subscription for the specified customer
       parameters:
         - schema:
             type: string
           in: query
           name: lang
-          description: Language of tariff info display
+          description: Language of subscription info display
     post:
-      summary: Update tariff plan settings
+      summary: Update subscription settings
       operationId: post-tariffs-code-user_id
       responses:
         '200':
@@ -1935,12 +1936,12 @@ paths:
                 renew_auto:
                   type: boolean
                   description: Controls auto-renewal status
-                notes:
+                comment:
                   type: string
-                  description: Adds notes to the tariff
+                  description: Adds comment to the subscription
                 admin_id:
                   type: integer
-                  description: Changes (resets) the tariff plan administrator
+                  description: Changes (resets) the subscription payer
                   nullable: true
   '/tariffs/{code}/{user_id}/activate':
     parameters:
@@ -1949,15 +1950,15 @@ paths:
         name: code
         in: path
         required: true
-        description: Tariff plan code
+        description: Subscription code
       - schema:
           type: integer
         name: user_id
         in: path
-        description: User ID for which the plan is about to activate (`0` for user of token)
+        description: Customer User ID for which the subscription is about to activate (`0` for user of token)
         required: true
     post:
-      summary: Activate (renew) tariff plan
+      summary: Activate (renew) subscription
       tags: []
       responses:
         '200':
@@ -1980,20 +1981,20 @@ paths:
                 properties:
                   active:
                     type: boolean
-                    description: Mark the tariff is already activated
+                    description: Mark the subscription is already activated
                   cost:
                     type: string
-                    description: The cost of activating the tariff plan (in the currency of the user's token balance)
+                    description: The cost of activating the subscription (in the currency of the user's token balance)
                   period:
                     type: integer
-                    description: Period value of tariff plan extension (with applied restrictions)
+                    description: Period value of subscription extension (with applied restrictions)
                     nullable: true
                   expire:
                     type: integer
                     description: Current (after activation) expiration date
                     nullable: true
                   options:
-                    description: Variable tariff options (with applied restrictions)
+                    description: Variable subscription options (with applied restrictions)
                     type: object
                     properties:
                       '{code}':
@@ -2011,13 +2012,13 @@ paths:
                     properties:
                       base:
                         type: string
-                        description: Base tariff cost
+                        description: Base subscription cost
                       balance:
                         type: string
                         description: Balance changing
                       recalc:
                         type: string
-                        description: Recalculation amount in case some options have changed for already activated tariff plan
+                        description: Recalculation amount in case some options have changed for already activated subscription
                       period_discount:
                         type: string
                         description: Discount for the payment for a multiple period (multiple months; if applicable)
@@ -2031,7 +2032,7 @@ paths:
                     type:
                       - string
                       - 'null'
-                    description: Payment ID in case the tariff plan was activated
+                    description: Payment ID in case the subscription was activated
                   payment_url:
                     type: string
                     description: URL to pay via bot by user itself
@@ -2042,12 +2043,12 @@ paths:
                       - 'null'
                     x-stoplight:
                       id: og6tfuyhycuo1
-                    description: New Order ID in case the tariff plan was activated
+                    description: New Order ID in case the subscription was activated
       operationId: post-tariffs-code-user_id-activate
       description: |-
-        Activates, extends and changes tariff plan options. The token owner becomes the tariff administrator after activation.
+        Activates, extends and changes subscription options. The token owner becomes the subscription payer after activation.
 
-        Possible **Errors in tariff plan activation** and **Errors with promo codes**.
+        Possible **Errors in subscription activation** and **Errors with promo codes**.
       requestBody:
         content:
           application/x-www-form-urlencoded:
@@ -2056,12 +2057,12 @@ paths:
               properties:
                 period:
                   type: integer
-                  description: Period of tariff payment; do not specify if there are changes in tariff without its prolongation
+                  description: Period of subscription payment; do not specify if there are changes in subscription without its prolongation
                   nullable: true
                 activate:
                   type: boolean
                   default: false
-                  description: Confirmation of tariff activation
+                  description: Confirmation of subscription activation
                 'options.{code}':
                   description: 'Indicates the value of the option with code `{code}`'
                   type:
@@ -2073,12 +2074,12 @@ paths:
                   description: Promo code
                 option_tune:
                   type: string
-                  description: Option code to make it tuned according to tariff plan duration restrictions
+                  description: Option code to make it tuned according to subscription duration restrictions
                 order_id:
                   type: integer
                   x-stoplight:
                     id: wfjuy62va0aud
-                  description: Order ID of previous tariff activation to inherit settings from
+                  description: Order ID of previous subscription activation to inherit settings from
   '/balance/{user_id}/transfer':
     parameters:
       - schema:
