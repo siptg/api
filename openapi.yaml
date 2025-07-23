@@ -24,6 +24,7 @@ info:
     | `db`           | Database error                                  |
     | `http_error`   | General HTTP error                              |
     | `tariff`       | Subscription limitations                        |
+    | `no_user`      | Telegram user is not specified                  |
     | `unknown`      | Unknown error                                   |
 
     ## Errors in SIP account change and activation
@@ -43,6 +44,10 @@ info:
     | `no_registrar`        | (for account type `pbx-siptg`) No connection from the PBX                              |
     | `address_unavailable` | (for account type `ip-ip`) IP address does not respond to the test request             |
     | `reconnecting`        | (for account type `siptg-pbx` and `softphone`) SIP server is unavailable; reconnecting |
+    | `no_username`         | (for account type `siptg-pbx` and `softphone`) SIP username is not specified           |
+    | `no_password`         | (for account type `siptg-pbx` and `softphone`) SIP password is not specified           |
+    | `no_domain`           | (for account type `siptg-pbx` and `softphone`) SIP domain and proxy are not specified  |
+    | `no_address_port`     | (for account type `ip-ip`) Endpoint address and port are not specified                 |
 
     ## Errors in creating a Telegram session
     | **Error code**     | **Description**                                                            |
