@@ -1718,6 +1718,12 @@ paths:
           in: query
           name: offset
           description: Offset from which to display results
+        - schema:
+            type: boolean
+            default: false
+          in: query
+          name: active
+          description: '`true` — list active subscriptions, `false` — available for activation subscriptions'
   '/tariffs/{code}/{user_id}':
     parameters:
       - schema:
